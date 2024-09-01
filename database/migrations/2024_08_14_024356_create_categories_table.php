@@ -15,13 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('slug')->nullable();
+            $table->foreignId('parent_id')->nullable()->constrained('categories')
+                    ->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     */
+    */
     public function down(): void
     {
         Schema::dropIfExists('categories');

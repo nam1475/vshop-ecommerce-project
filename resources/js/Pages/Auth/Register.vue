@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import Main from '@/Pages/User/Components/Layout/Main.vue';
+import Main from '@/Pages/Customer/Components/Layout/Main.vue';
 
 const form = useForm({
     name: '',

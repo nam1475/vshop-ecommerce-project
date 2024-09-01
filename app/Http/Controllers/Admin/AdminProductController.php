@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
 use App\Services\Admin\AdminProductService;
+use App\Traits\HelperTrait;
 
 class AdminProductController extends Controller
 {   
+    use HelperTrait;
+
     protected $productService;
 
     public function __construct(AdminProductService $productService)
@@ -19,20 +22,15 @@ class AdminProductController extends Controller
 
     public function list()
     {
-        $data = $this->productService->list();
         return Inertia::render('Admin/Product/List', [
-            'products' => $data['products'], 
-            'categories' => $data['categories'], 
-            'brands' => $data['brands'],
+            'products' => $this->productService->getProducts()->paginate(10), 
         ]);
     }   
 
     public function add(){
-        $data = $this->productService->list();
         return Inertia::render('Admin/Product/Add', [
-            'products' => $data['products'], 
-            'categories' => $data['categories'], 
-            'brands' => $data['brands'],
+            'categories' => $this->getCategories()->get(), 
+            'brands' => $this->productService->getBrands(),
         ]);
     }
 
@@ -49,7 +47,7 @@ class AdminProductController extends Controller
         // dd($this->productService->getProductById($id));
         return Inertia::render('Admin/Product/Edit', [
             'product' => $this->productService->getProductById($id),
-            'categories' => $this->productService->getCategories(),
+            'categories' => $this->getCategories()->get(),
             'brands' => $this->productService->getBrands(),
         ]);
     }

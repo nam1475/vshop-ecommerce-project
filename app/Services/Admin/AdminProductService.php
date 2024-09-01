@@ -9,34 +9,22 @@ use App\Models\ProductImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\HelperTrait;
 
 class AdminProductService
 {
-    public function list()
-    {
-        $data = [
-            'products' => $this->getProducts()->get(),
-            'categories' => $this->getCategories(),
-            'brands' => $this->getBrands(),
-        ];
-        return $data;
-    }
+    use HelperTrait;
 
     public function getProducts()
     {
         return Product::with('category', 'brand', 'images');
     }
 
-    public function getCategories()
-    {
-        return Category::all();
-    }
-
     public function getBrands()
     {
         return Brand::all();
     }
-
+    
     public function uniqueImageName($image)
     {
         $uniqueName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
@@ -44,6 +32,12 @@ class AdminProductService
         $publicPath = public_path($path);
         $image->move($publicPath, $uniqueName);
         return $uniqueName;
+    }
+    
+    public function getProductById($id)
+    {
+        // return Product::where('id', $id)->with('category', 'brand', 'images')->first();
+        return Product::with('category', 'brand', 'images')->find($id);
     }
 
     public function store($request)
@@ -67,12 +61,6 @@ class AdminProductService
             DB::rollBack();
             throw new \Exception('Failed to create product: ' . $e->getMessage());
         }
-        
-    }
-
-    public function getProductById($id)
-    {
-        return Product::where('id', $id)->with('category', 'brand', 'images')->first();
     }
     
     public function update($request, $id)

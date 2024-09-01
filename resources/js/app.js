@@ -10,9 +10,12 @@ import 'element-plus/dist/index.css'
 /* Sweet Alert */
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+// import 'flowbite/dist/flowbite.min.css';
+// import 'pagedone/src/css/pagedone.css';
+// import 'pagedone/src/js/pagedone.js';
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -29,4 +32,5 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
 

@@ -7,9 +7,14 @@ use App\Http\Resources\CartResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Route;
+use App\Traits\HelperTrait;
+use App\Models\CustomerAddress;
+use App\Http\Resources\CustomerAddressResource;
 
 class HandleInertiaRequests extends Middleware
 {
+    use HelperTrait;
+
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -36,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'customer' => $request->user('customer'),
             ],
 
             'flash' => [
@@ -46,6 +52,10 @@ class HandleInertiaRequests extends Middleware
             ],
 
             'cart' => new CartResource(CartHelper::getProductsAndCartItems()),
+
+            // 'customerAddress' => new CustomerAddressResource(CustomerAddress::where('customer_id', $request->user('customer')->id)->first()),
+            
+            'categories' => $this->getCategories()->get(),
 
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

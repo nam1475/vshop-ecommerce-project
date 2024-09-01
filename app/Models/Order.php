@@ -4,8 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\CreatedAndUpdatedBy;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, CreatedAndUpdatedBy;
+    
+    protected $fillable = ['total_price', 'status', 'session_id', 'customer_address_id'];
+
+    public function orderItems() {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function customerAddress() {
+        return $this->belongsTo(CustomerAddress::class);
+    }
+
+    
+    
 }

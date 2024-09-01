@@ -4,6 +4,8 @@ import { router, useForm } from "@inertiajs/vue3";
 import { Plus } from "@element-plus/icons-vue";
 import Main from "@/Pages/Admin/Components/Layout/Main.vue";
 import { success, error, warning } from "@/alert.js";
+import FormAction from '@/Pages/Admin/Components/FormAction.vue';
+import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
 
 const props = defineProps({
   product: Object,
@@ -45,6 +47,9 @@ function handleRemove(file) {
       },
     });
   }
+  else{
+    uploadImages.value.splice(uploadImages.value.indexOf(file.raw), 1);
+  }
 }
 
 function handleFileUpload(file) {
@@ -84,226 +89,206 @@ function updateProduct() {
 </script>
 
 <template>
-  <Main>
-    <section class="bg-white dark:bg-gray-900">
-      <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-          Edit product
-        </h2>
-        <form
-          class="p-4 md:p-5"
-          @submit.prevent="updateProduct()"
+<FormAction title="Edit Product" :action="updateProduct">
+  <div class="grid gap-4 mb-4 grid-cols-3">
+    <div class="col-span-1">
+      <label
+        for="name"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Name</label
+      >
+      <input
+        type="text"
+        id="name"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        required=""
+        v-model="form.name"
+      />
+    </div>
+    <div class="col-span-1">
+      <label
+        for="brand"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Brand</label
+      >
+      <select
+        id="brand"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        v-model="form.brand_id"
+      >
+        <option value=""></option>
+        <option
+          v-for="brand in brands"
+          :value="brand.id"
+          :key="brand.id"
+          :selected="brand.id == form.brand_id"
         >
-          <div class="grid gap-4 mb-4 grid-cols-3">
-            <div class="col-span-1">
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Name</label
-              >
-              <input
-                type="text"
-                id="name"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                required=""
-                v-model="form.name"
-              />
-            </div>
-            <div class="col-span-1">
-              <label
-                for="brand"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Brand</label
-              >
-              <select
-                id="brand"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                v-model="form.brand_id"
-              >
-                <option value=""></option>
-                <option
-                  v-for="brand in brands"
-                  :value="brand.id"
-                  :key="brand.id"
-                  :selected="brand.id == form.brand_id"
-                >
-                  {{ brand.name }}
-                </option>
-              </select>
-            </div>
-            <div class="col-span-1">
-              <label
-                for="category"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Category</label
-              >
-              <select
-                id="category"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                v-model="form.category_id"
-              >
-                <option value=""></option>
-                <option
-                  v-for="category in categories"
-                  :value="category.id"
-                  :key="category.id"
-                  :selected="category.id == form.category_id"
-                >
-                  {{ category.name }}
-                </option>
-              </select>
-            </div>
-            <div class="col-span-1">
-              <label
-                for="price"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Price</label
-              >
-              <input
-                type="number"
-                id="price"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                required=""
-                v-model="form.price"
-              />
-            </div>
-            <div class="col-span-1">
-              <label
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Published</label
-              >
-              <div>
-                <input
-                  type="radio"
-                  name="published"
-                  id="published"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  required=""
-                  value="1"
-                  v-model="form.published"
-                />
-                <label
-                  for="published"
-                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >Yes</label
-                >
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  name="published"
-                  id="no-published"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  required=""
-                  value="0"
-                  v-model="form.published"
-                />
-                <label
-                  for="no-published"
-                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >No</label
-                >
-              </div>
-            </div>
-
-            <div class="col-span-1">
-              <label
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >In stock</label
-              >
-              <div>
-                <input
-                  type="radio"
-                  name="in_stock"
-                  id="in-stock"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  required=""
-                  value="1"
-                  v-model="form.in_stock"
-                />
-                <label
-                  for="in-stock"
-                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >Yes</label
-                >
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  name="in_stock"
-                  id="out-stock"
-                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  required=""
-                  value="0"
-                  v-model="form.in_stock"
-                />
-                <label
-                  for="out-stock"
-                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >No</label
-                >
-              </div>
-            </div>
-            <div class="col-span-1">
-              <label
-                for="quantity"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Quantity</label
-              >
-              <input
-                type="number"
-                name="quantity"
-                id="quantity"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                v-model="form.quantity"
-              />
-            </div>
-
-            <div class="col-span-2">
-              <label
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Description</label
-              >
-              <textarea
-                id="description"
-                rows="3"
-                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                v-model="form.description"
-              ></textarea>
-            </div>
-
-            <div class="col-span-3">
-              <label
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Images</label
-              >
-              <el-upload
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :auto-upload="false"
-                :on-change="handleFileUpload"
-                :file-list="form.product_images"
-                multiple
-              >
-                <el-icon><Plus /></el-icon>
-              </el-upload>
-
-              <el-dialog v-model="dialogVisible">
-                <img w-full :src="dialogImageUrl" alt="Preview Image" />
-              </el-dialog>
-              <!-- <img v-for="(item, index) in form.product_images" :key="index" :src="item.image" alt="" class="w-20 h-30">   -->
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Submit
-          </button>
-        </form>
+          {{ brand.name }}
+        </option>
+      </select>
+    </div>
+    <div class="col-span-1">
+      <label
+        for="category"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Category</label
+      >
+      <select
+        id="category"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        v-model="form.category_id"
+      >
+        <option value=""></option>
+        <RecursiveSelected 
+          v-for="ca in categories"
+          :key="ca.id"
+          :id="ca.id"
+          :category="ca"
+          :selected="form.category_id == ca.id"
+        />
+      </select>
+    </div>
+    <div class="col-span-1">
+      <label
+        for="price"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Price</label
+      >
+      <input
+        type="number"
+        id="price"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        required=""
+        v-model="form.price"
+      />
+    </div>
+    <div class="col-span-1">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Published</label
+      >
+      <div>
+        <input
+          type="radio"
+          name="published"
+          id="published"
+          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          required=""
+          value="1"
+          v-model="form.published"
+        />
+        <label
+          for="published"
+          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Yes</label
+        >
       </div>
-    </section>
-  </Main>
+      <div>
+        <input
+          type="radio"
+          name="published"
+          id="no-published"
+          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          required=""
+          value="0"
+          v-model="form.published"
+        />
+        <label
+          for="no-published"
+          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >No</label
+        >
+      </div>
+    </div>
+
+    <div class="col-span-1">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >In stock</label
+      >
+      <div>
+        <input
+          type="radio"
+          name="in_stock"
+          id="in-stock"
+          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          required=""
+          value="1"
+          v-model="form.in_stock"
+        />
+        <label
+          for="in-stock"
+          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >Yes</label
+        >
+      </div>
+      <div>
+        <input
+          type="radio"
+          name="in_stock"
+          id="out-stock"
+          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          required=""
+          value="0"
+          v-model="form.in_stock"
+        />
+        <label
+          for="out-stock"
+          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >No</label
+        >
+      </div>
+    </div>
+    <div class="col-span-1">
+      <label
+        for="quantity"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Quantity</label
+      >
+      <input
+        type="number"
+        name="quantity"
+        id="quantity"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        v-model="form.quantity"
+      />
+    </div>
+
+    <div class="col-span-2">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Description</label
+      >
+      <textarea
+        id="description"
+        rows="3"
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        v-model="form.description"
+      ></textarea>
+    </div>
+
+    <div class="col-span-3">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Images</label
+      >
+      <el-upload
+        list-type="picture-card"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove"
+        :auto-upload="false"
+        :on-change="handleFileUpload"
+        :file-list="form.product_images"
+        multiple
+      >
+        <el-icon><Plus /></el-icon>
+      </el-upload>
+
+      <el-dialog v-model="dialogVisible">
+        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+      </el-dialog>
+      <!-- <img v-for="(item, index) in form.product_images" :key="index" :src="item.image" alt="" class="w-20 h-30">   -->
+    </div>
+  </div>
+</FormAction>
 </template>

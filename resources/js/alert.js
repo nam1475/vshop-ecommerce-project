@@ -8,6 +8,8 @@ export function success(page){
         position: "top-right",
         showConfirmButton: false,
         timer: 4000, 
+        showCloseButton: true,
+        timerProgressBar: true
     });
 }
 
@@ -19,6 +21,8 @@ export function error(page){
         position: "top-right",
         showConfirmButton: false,
         timer: 4000, 
+        showCloseButton: true,
+        timerProgressBar: true
     });
 }
 
@@ -28,6 +32,7 @@ export function warning(){
         text: "This actions cannot undo!",
         icon: 'warning',
         showCancelButton: true,
+        showCloseButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         cancelButtonText: 'No',

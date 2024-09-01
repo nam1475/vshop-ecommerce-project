@@ -9,22 +9,22 @@ class CartHelper{
 
     public static function countCartItems()
     {
-        $user = auth()->user();
-        if($user){
-            // return CartItem::where('user_id', $user->id)->sum('quantity');
-            return CartItem::where('user_id', $user->id)->count();
+        $customer = auth('customer')->user();
+        if($customer){
+            // return CartItem::where('customer_id', $customer->id)->sum('quantity');
+            return CartItem::where('customer_id', $customer->id)->count();
         }
     }
 
     public static function getCartItems()
     {
-        $user = auth()->user();
-        if($user){
-            return CartItem::where('user_id', $user->id)->get()->map(function ($item) {
-                if($item->product_id )
+        $customer = auth('customer')->user();
+        if($customer){
+            return CartItem::where('customer_id', $customer->id)->get()->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'product_id' => $item->product_id,
-                    'quantity' => $item->quantity
+                    'quantity' => $item->quantity,
                 ];
             }); 
         }

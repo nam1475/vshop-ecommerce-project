@@ -15,13 +15,16 @@ class AdminAuthController extends Controller
         return Inertia::render('Admin/Auth/Login');
     }
 
-    public function login(Request $request)
-    {
-        // Add your login logic here
-        // Check if the user is an admin and redirect accordingly
+    public function login(Request $request) 
+    {   
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string',
+        ]);
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'is_admin' => true],
             $request->remember)) {
-            return redirect()->route('admin.dashboard'); // Redirect to the admin dashboard
+            return redirect()->route('admin.dashboard');
         }
 
         return redirect()->route('admin.login')->with('error', 'Invalid credentials.');

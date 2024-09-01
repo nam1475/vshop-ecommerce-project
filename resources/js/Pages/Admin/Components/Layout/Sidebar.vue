@@ -96,18 +96,18 @@ import { Link } from '@inertiajs/vue3';
             </button>
             <ul id="dropdown-pages" class="hidden py-2 space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  :href="route('admin.category.list')"
                   class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  >Categories</a
-                >
+                  >Categories
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  :href="route('admin.brand.list')"
                   class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  >Brands</a
-                >
+                  >Brands
+                </Link>
               </li>
               <li>
                 <Link

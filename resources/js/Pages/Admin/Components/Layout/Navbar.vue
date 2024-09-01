@@ -3,7 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 
-const auth = computed(() => usePage().props.auth);
+const user = computed(() => usePage().props.auth.user);
 
 </script>
 
@@ -621,11 +621,11 @@ const auth = computed(() => usePage().props.auth);
             <div class="py-3 px-4">
               <span
                 class="block text-sm font-semibold text-gray-900 dark:text-white"
-                >Neil Sims</span
+                >{{ user.name }}</span
               >
               <span
                 class="block text-sm text-gray-900 truncate dark:text-white"
-                >name@flowbite.com</span
+                >{{ user.email }}</span
               >
             </div>
             <ul

@@ -1,13 +1,18 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminBrandController;
+use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminProductController;
-use App\Http\Controllers\User\HomeController;
-use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\Customer\CustomerHomeController;
+use App\Http\Controllers\Customer\CustomerCartController;
+use App\Http\Controllers\Customer\CustomerCategoryController;
+use App\Http\Controllers\Customer\CustomerOrderController;
+use App\Http\Controllers\Customer\CustomerProductController;
+use App\Http\Controllers\Customer\CustomerAccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,23 +30,57 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::controller(HomeController::class)->group(function () {
+Route::controller(CustomerHomeController::class)->group(function () {
     Route::get('/', 'home')->name('home');
 });
 
-Route::middleware('user')->name('user.')->group(function () {
-    Route::controller(ProfileController::class)->name('profile.')->group(function () {
-        Route::get('/profile/edit', 'edit')->name('edit');
-        Route::patch('/profile/update', 'update')->name('update');
-        Route::delete('/profile/delete', 'destroy')->name('destroy');
+Route::middleware('customer')->name('customer.')->group(function () {
+    Route::middleware('session.guard:shop')->group(function () {
+
+        Route::controller(CustomerAccountController::class)->prefix('account')->name('account.')->group(function () {
+            Route::get('/edit', 'edit')->name('edit');
+            Route::patch('/update', 'update')->name('update');
+            Route::delete('/delete', 'destroy')->name('destroy');
+            Route::get('/info', 'info')->name('info');
+            Route::patch('/info/change-password', 'changePassword')->name('info.changePassword');
+            Route::patch('/info/update-account-info', 'updateAccountInfo')->name('info.updateAccountInfo');
+
+            Route::get('/orders', 'orderList')->name('order.list');
+            Route::get('/order/details/{orderId}', 'orderDetails')->name('order.details');
+            Route::patch('/order/cancel/{orderId}', 'cancelOrder')->name('order.cancel');
+            
+            Route::prefix('address')->name('address.')->group(function () {
+                Route::get('/', 'address')->name('index');
+                Route::patch('/address/update/{addressId}', 'updateAddress')->name('update');
+                Route::post('/address/store', 'storeAddress')->name('store');
+                Route::delete('/address/delete/{addressId}', 'deleteAddress')->name('delete'); 
+            });
+        });
+    
+        Route::controller(CustomerCartController::class)->prefix('cart')->name('cart.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::post('/store/{productId}', 'store')->name('store');
+            Route::patch('/update/{cartId}', 'update')->name('update');
+            Route::delete('/delete/{cartId}', 'delete')->name('delete');
+        });
+        
+        Route::controller(CustomerCategoryController::class)->name('category.')->group(function () {
+            Route::get('/category/{slug}', 'list')->name('list');
+        });
+    
+        Route::controller(CustomerProductController::class)->name('product.')->group(function () {
+            Route::get('/product/{slug}', 'details')->name('details');
+        });
+        
+        Route::controller(CustomerOrderController::class)->prefix('order')->name('order.')->group(function () {
+            Route::post('/store', 'store')->name('store');
+            Route::get('/success', 'success')->name('success');
+            Route::get('/cancel', 'cancel')->name('cancel');
+        });
+        
     });
 
-    Route::controller(CartController::class)->name('cart.')->group(function () {
-        Route::get('/cart/list', 'list')->name('list');
-        Route::post('/cart/store/{productId}', 'store')->name('store');
-        Route::patch('/cart/update/{cartId}', 'update')->name('update');
-        Route::delete('/cart/delete/{cartId}', 'delete')->name('delete');
-    });
+
 });
 
 
@@ -51,24 +90,45 @@ Route::controller(AdminAuthController::class)->prefix('admin')->name('admin.')->
         Route::get('login', 'showLoginForm')->name('login');
         Route::post('login', 'login')->name('login.action');
     });
-    Route::post('logout')->name('logout')->middleware('admin');
+    Route::post('logout', 'logout')->name('logout')->middleware('admin');
 });
 
-Route::middleware('admin')->prefix('admin')->group(function () {
-    Route::controller(AdminController::class)->name('admin.')->group(function () {
-        Route::get('/dashboard', 'index')->name('dashboard');
-    });
+Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('session.guard:admin')->group(function () {
 
-    Route::controller(AdminProductController::class)->name('admin.')->group(function () {
-        Route::get('/product/list', 'list')->name('product.list');
-        Route::get('/product/add', 'add')->name('product.add');
-        Route::post('/product/store', 'store')->name('product.store');
-        Route::get('/product/edit/{id}', 'edit')->name('product.edit');
-        Route::put('/product/update/{id}', 'update')->name('product.update');
-        Route::delete('/product/delete/{id}', 'delete')->name('product.delete');
-        Route::delete('/product/delete/image/{id}', 'deleteImage')->name('product.delete.image');
-    });
+        Route::controller(AdminController::class)->group(function () {
+            Route::get('/dashboard', 'index')->name('dashboard');
+        });
 
+        Route::controller(AdminProductController::class)->prefix('product')->name('product.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/add', 'add')->name('add');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
+        });
+
+        Route::controller(AdminCategoryController::class)->prefix('category')->name('category.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/add', 'add')->name('add');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+        Route::controller(AdminBrandController::class)->prefix('brand')->name('brand.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/add', 'add')->name('add');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+    });
 });
 
 

@@ -5,7 +5,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import Main from '@/Pages/User/Components/Layout/Main.vue';
+import Main from '@/Pages/Customer/Components/Layout/Main.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { success, error } from '@/alert.js';
 

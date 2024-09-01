@@ -17,6 +17,6 @@ class UserSeeder extends Seeder
         User::truncate();
 
         // Tạo dữ liệu mới
-        User::factory(10)->create();
+        User::factory(5)->create();
     }
 }
