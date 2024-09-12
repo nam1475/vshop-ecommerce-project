@@ -8,10 +8,12 @@ const props = defineProps({
   customerMainAddress: Object,
 });
 
+
 const cart = computed(() => usePage().props.cart.data);
 const cartItems = computed(() => cart.value.items);
 const products = computed(() => cart.value.products);
 const cartTotal = computed(() => cart.value.total || 0);
+const customer = computed(() => usePage().props.auth.customer || null);
 
 function getTotalPrice(price, productId){
   return price * getQuantity(productId);
@@ -30,20 +32,25 @@ function getQuantity(productId){
 
 function updateCartItem(productId, quantity){
   const cartItem = getCartItem(productId);
-  router.patch(route('customer.cart.update', cartItem.id), {
+  router.patch(route('customer.cart.update', cartItem.id), 
+  {
     quantity: quantity,
+  },
+  {
     onSuccess: (page) => {
       success(page);
     },
     onError: (page) => {
       error(page);
     }
-  });
+  }
+  );
 }
 
 function removeCartItem(productId){
   const cartItem = getCartItem(productId);
-  router.delete(route('customer.cart.delete', cartItem.id), {
+  router.delete(route('customer.cart.delete', cartItem.id),
+  {
     onSuccess: (page) => {
       success(page);
     },
@@ -53,8 +60,8 @@ function removeCartItem(productId){
   });
 }
 
-var formAddress = reactive({
-  address1: '',
+const formAddress = reactive({
+  address: '',
   city: '',
   state: '',
   phone: '',
@@ -64,8 +71,12 @@ var formAddress = reactive({
 });
 
 if(props.customerMainAddress){
-  formAddress = props.customerMainAddress;
+  // formAddress = props.customerMainAddress;
+  Object.assign(formAddress, props.customerMainAddress);
 }
+
+// const form = props.customerMainAddress ? useForm(formAddress) : useForm({});
+// const formAddress = computed(() => props.customerMainAddress);
 
 function checkout(){
   router.post(route('customer.order.store'), {
@@ -160,34 +171,40 @@ function checkout(){
                 <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Shipping Address</h2>
                 <!-- <form action="#"> -->
                     <div class="grid grid-cols-2 gap-6">
-                        <div class="col-span-2">
+                        <div class="col-span-1">
+                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                            <input type="text" v-model="formAddress.name" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone" required="">
+                        </div>
+                        <div class="col-span-1">
+                            <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
+                            <input type="text" v-model="formAddress.phone" name="phone" id="phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone" required="">
+                        </div>
+
+                        <div class="col-span-1">
                             <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
-                            <input type="text" v-model="formAddress.address1" name="address" id="address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address" required="">
+                            <input type="text" v-model="formAddress.address" name="address" id="address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address" required="">
                         </div>
-                        <div class="w-full">
-                            <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
-                            <input type="text" v-model="formAddress.city" name="city" id="city" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="City" required="">
+                        <div class="col-span-1">
+                            <label for="province" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Province</label>
+                            <input type="text" v-model="formAddress.province" name="province" id="province" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="City" required="">
                         </div>
-                        <div class="w-full">
-                            <label for="state" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
-                            <input type="text" v-model="formAddress.state" name="state" id="state" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="State" required="">
+                        <div class="col-span-1">
+                            <label for="district" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">District</label>
+                            <input type="text" v-model="formAddress.district" name="district" id="district" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="State" required="">
                         </div>
-                        <div class="w-full">
+                        <div class="col-span-1">
+                            <label for="ward" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ward</label>
+                            <input type="text" v-model="formAddress.ward" name="ward" id="ward" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="State" required="">
+                        </div>
+                        <div class="col-span-1">
                             <label for="zip-code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Zip Code</label>
                             <input type="number" v-model="formAddress.zip_code" name="zipCode" id="zip-code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Zip Code" required="">
                         </div>
-                        <div class="w-full">
+                        <div class="col-span-1">
                             <label for="country-code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country Code</label>
                             <input type="number" v-model="formAddress.country_code" name="countryCode" id="country-code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Country Code" required="">
                         </div>
-                        <div class="w-full">
-                            <label for="address-type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address Type</label>
-                            <input type="text" v-model="formAddress.type" name="addressType" id="address-type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address Type" required="">
-                        </div>
-                        <div class="w-full">
-                            <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
-                            <input type="number" v-model="formAddress.phone" name="phone" id="phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address Type" required="">
-                        </div>
+                          
                     </div>
                     <!-- <button type="submit" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
                         Submit

@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="antialiased bg-gray-50 dark:bg-gray-900">
+    <div class="antialiased bg-gray-50">
         <!-- Navbar -->
         <Navbar  />
 
@@ -21,7 +21,7 @@ onMounted(() => {
         <Sidebar  />
 
         <!-- Content -->
-        <main class="p-4 md:ml-64 h-auto pt-20">
+        <main class="p-4 ml-64 h-screen pt-20">
             <slot />
         </main>
     </div>

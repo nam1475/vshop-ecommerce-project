@@ -18,8 +18,7 @@ class CustomerAddressResource extends JsonResource
             return [
                 'id' => $this->id,
                 'type' => $this->type,
-                'address1' => $this->address1,
-                'address2' => $this->address2,
+                'address' => $this->address,
                 'city' => $this->city,
                 'state' => $this->state,
                 'phone' => $this->phone,

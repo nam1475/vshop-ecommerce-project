@@ -4,6 +4,7 @@ namespace App\Services\Customer;
 
 use App\Http\Resources\CartResource;
 use App\Http\Resources\OrderResource;
+use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\Order;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -14,7 +15,6 @@ class CustomerAccountService
 
     public function getOrders($request)
     {
-        // $orders = Order::where('created_by', auth('customer')->user()->id)->paginate(10);
         $orders = Order::where('created_by', auth('customer')->user()->id);
         if($request->query()){
             $status = $request->query('status');
@@ -38,12 +38,6 @@ class CustomerAccountService
             throw $e;
             return false;
         }
-    }
-
-    public function getOrder($orderId)
-    {
-        $order = Order::with(['orderItems.product.images', 'customerAddress.customer'])->where('id', $orderId)->first();
-        return new OrderResource($order);
     }
 
     public function changePassword($request)
@@ -106,7 +100,7 @@ class CustomerAccountService
                     $address->update($request->all());
                     break;
                 }
-                else{
+                else if($request->is_main == 1 && $address->is_main == 1){
                     $address->update(['is_main' => 0]);
                 }
             }

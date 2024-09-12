@@ -1,9 +1,11 @@
 <script setup>
-import {defineProps, reactive} from 'vue'
+import {computed, defineProps, onMounted, reactive} from 'vue'
 import Index from '@/Pages/Customer/Account/Index.vue'
 import { usePage, useForm, Link, router } from '@inertiajs/vue3'
 import Modal from '@/Pages/Customer/Components/Modal.vue';
 import { success, error, warning } from '@/alert';
+import Location from '@/Pages/Customer/Account/Location.vue';
+import { useStore } from 'vuex'
 
 const props = defineProps({
     customerAddresses: Array
@@ -11,25 +13,39 @@ const props = defineProps({
 
 const customer = usePage().props.auth.customer;
 
-// const formEditAddress = reactive(props.customerAddresses);
-
-const arr = reactive({
-    is_main: 0
-});
+// const store = useStore();
+// const selectedProvince = computed(() => store.getters['location/selectedProvince']);
+// const selectedDistrict = computed(() => store.getters['location/selectedDistrict']);
+// const selectedWard = computed(() => store.getters['location/selectedWard']);
 
 function findAddressById(addressId){
-    return props.customerAddresses.find((address) => address.id == addressId);
-    // return formEditAddress.find((address) => address.id == addressId);
+    // return props.customerAddresses.find((address) => address.id == addressId);
+    return formEditAddress.value.find((address) => address.id == addressId);
 }
 
 const formAddAddress = useForm({
-    address1: '',
-    city: '',
-    state: '',
+    name: customer.name || '',
+    phone: customer.phone || '',
+    address: '',
+    province: '',
+    district: '',
+    ward: '',
     is_main: 0,
     customer_id: customer.id
 });
+function addAddress(){
+    formAddAddress.post(route('customer.account.address.store'), {
+        onSuccess: (page) => {
+            success(page);
+            formAddAddress.reset();
+        },
+        onError: (page) => {
+            error(page);
+        },
+    });
+}
 
+const formEditAddress = computed(() => props.customerAddresses);
 function updateAddress(addressId){
     const address = findAddressById(addressId);
     router.patch(route('customer.account.address.update', addressId), address, {
@@ -58,18 +74,6 @@ function deleteAddress(addressId){
     })
 }
 
-function addAddress(){
-    formAddAddress.post(route('customer.account.address.store'), {
-        onSuccess: (page) => {
-            success(page);
-            formAddAddress.reset();
-        },
-        onError: (page) => {
-            error(page);
-        },
-    });
-}
-
 </script>
 
 <template>
@@ -81,26 +85,37 @@ function addAddress(){
             <Modal title="Add new address" id="modal-add-address" buttonText="Add new address">
                 <form action="" @submit.prevent="addAddress()">
                     <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 px-4 py-6">
+
                         <div class="col-span-1">
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                Address
+                                Name 
                             </label>
-                            <input v-model="formAddAddress.address1" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="">
+                            <input v-model="formAddAddress.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name" required="">
+                        </div>
+                        
+                        <div class="col-span-1">
+                            <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Phone 
+                            </label>
+                            <input v-model="formAddAddress.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone" required="">
                         </div>
 
                         <div class="col-span-1">
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                City
+                                Address 
                             </label>
-                            <input v-model="formAddAddress.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="">
+                            <input v-model="formAddAddress.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address" required="">
                         </div>
 
-                        <div class="col-span-1">
-                            <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                State
-                            </label>
-                            <input v-model="formAddAddress.state" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="">
-                        </div>
+                        <!-- <Location v-model:selectedProvince="formAddAddress.province" v-model:selectedDistrict="formAddAddress.district" v-model:selectedWard="formAddAddress.ward"/> -->
+                        <Location 
+                            :selectedProvince="formAddAddress.province" 
+                            :selectedDistrict="formAddAddress.district" 
+                            :selectedWard="formAddAddress.ward"
+                            @update:selectedProvince="formAddAddress.province = $event"
+                            @update:selectedDistrict="formAddAddress.district = $event"
+                            @update:selectedWard="formAddAddress.ward = $event"
+                        />
 
                         <div class="col-span-2">    
                             <input :id="`is-main-${formAddAddress.id}`" type="checkbox" :checked="formAddAddress.is_main" v-model="formAddAddress.is_main" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -123,17 +138,17 @@ function addAddress(){
             </Modal>
         </div>
         
-        <div class="bg-white p-6 rounded-lg shadow mb-6" v-for="ca in customerAddresses" :key="ca.id">
-        <!-- <div class="bg-white p-6 rounded-lg shadow mb-6" v-for="ca in formEditAddress" :key="ca.id"> -->
+        <!-- <div class="bg-white p-6 rounded-lg shadow mb-6" v-for="ca in customerAddresses" :key="ca.id"> -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6" v-for="ca in formEditAddress" :key="ca.id">
             <div class="flex justify-between items-start">
                 <div>
-                    <h3 class="text-lg font-semibold">{{ customer.name }} 
+                    <h3 class="text-lg font-semibold">{{ ca.name }} 
                         <span v-if="ca.is_main" class="ml-2 text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-full">
                             Default
                         </span>
                     </h3>
-                    <p class="text-gray-700">{{ customer.phone }}</p>
-                    <p class="text-gray-700">{{ ca.address1 }}, {{ ca.city }}, {{ ca.state }}</p>
+                    <p class="text-gray-700">{{ ca.phone }}</p>
+                    <p class="text-gray-700">{{ ca.address }}, {{ ca.ward }}, {{ ca.district }}, {{ ca.province }} </p>
                 </div>
 
                 <div class="flex space-x-4">
@@ -142,24 +157,33 @@ function addAddress(){
                             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 px-4 py-6">
                                 <div class="col-span-1">
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Name 
+                                    </label>
+                                    <input v-model="ca.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name" required="">
+                                </div>
+                                
+                                <div class="col-span-1">
+                                    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        Phone 
+                                    </label>
+                                    <input v-model="ca.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone" required="">
+                                </div>
+
+                                <div class="col-span-1">
+                                    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Address
                                     </label>
-                                    <input v-model="ca.address1" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="">
+                                    <input v-model="ca.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address" required="">
                                 </div>
 
-                                <div class="col-span-1">
-                                    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        City
-                                    </label>
-                                    <input v-model="ca.city" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="">
-                                </div>
-
-                                <div class="col-span-1">
-                                    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        State
-                                    </label>
-                                    <input v-model="ca.state" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type product name" required="">
-                                </div>
+                                <Location 
+                                    :selectedProvince="ca.province" 
+                                    :selectedDistrict="ca.district" 
+                                    :selectedWard="ca.ward"
+                                    @update:selectedProvince="ca.province = $event"
+                                    @update:selectedDistrict="ca.district = $event"
+                                    @update:selectedWard="ca.ward = $event"
+                                />
 
                                 <div class="col-span-2">    
                                     <input :id="`is-main-${ca.id}`" type="checkbox" true-value="1" false-value="0" v-model="ca.is_main" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">

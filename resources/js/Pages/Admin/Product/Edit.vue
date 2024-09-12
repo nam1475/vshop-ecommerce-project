@@ -27,6 +27,9 @@ var form = useForm({
   product_images: props.product.images,
 });
 
+// console.log(props.product.images);  
+
+
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const uploadImages = ref([]);
@@ -54,7 +57,6 @@ function handleRemove(file) {
 
 function handleFileUpload(file) {
   uploadImages.value.push(file.raw);
-  console.log(uploadImages.value);
 }
 
 function updateProduct() {

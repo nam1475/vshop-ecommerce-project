@@ -11,7 +11,7 @@ defineProps({
 </script>
 
 <template>
-<Table :href="route('admin.brand.add')" :links="brands.links">
+<Table routeName="admin.brand" :links="brands.links">
     <template #tableHeader>
         <tr>
             <th scope="col" class="px-4 py-3">ID</th>

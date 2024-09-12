@@ -23,7 +23,8 @@ class AdminProductController extends Controller
     public function list()
     {
         return Inertia::render('Admin/Product/List', [
-            'products' => $this->productService->getProducts()->paginate(10), 
+            'products' => $this->productService->getProducts()->paginate(10),
+            'brands' => $this->productService->getBrands(), 
         ]);
     }   
 
@@ -44,7 +45,6 @@ class AdminProductController extends Controller
     }
 
     public function edit($id){
-        // dd($this->productService->getProductById($id));
         return Inertia::render('Admin/Product/Edit', [
             'product' => $this->productService->getProductById($id),
             'categories' => $this->getCategories()->get(),
@@ -61,8 +61,8 @@ class AdminProductController extends Controller
         return redirect()->back()->with('error', 'Failed to update product.');
     }
 
-    public function delete($id){
-        $result = $this->productService->delete($id);
+    public function delete(Request $request, $id = null){
+        $result = $this->productService->delete($request, $id);
         if($result){
             return redirect()->route('admin.product.list')->with('success', 'Product deleted successfully.');
         }

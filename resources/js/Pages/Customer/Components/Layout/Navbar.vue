@@ -19,7 +19,6 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue';
 
-
 const auth = computed(() => usePage().props.auth);
 const cart = computed(() => usePage().props.cart);
 const categories = computed(() => usePage().props.categories);
@@ -151,7 +150,7 @@ const open = ref(false);
 </script>
 
 <template>
-  <div class="bg-white">
+  <div class="bg-white sticky top-0 z-50">
     <header class="relative bg-white">
       <nav aria-label="Top" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="border-b border-gray-200">
@@ -177,7 +176,7 @@ const open = ref(false);
 
                   <!-- Sub category -->
                   <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0" enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100" leave-to-class="opacity-0">
-                    <PopoverPanel class="absolute z-10 inset-x-0 top-full text-sm text-gray-500">
+                    <PopoverPanel class="absolute z-40 inset-x-0 top-full text-sm text-gray-500">
                       <!-- Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow -->
                       <div class="absolute inset-0 top-1/2 bg-white shadow" aria-hidden="true" />
                       <div class="relative bg-white">
@@ -187,18 +186,18 @@ const open = ref(false);
                           </div>
 
                           <div class="grid grid-cols-2 gap-x-8 gap-y-10 py-10">
-                            <!-- <div class="col-start-2 grid grid-cols-2 gap-x-8">
-                              <div v-for="item in category.featured" :key="item.name" class="group relative text-base sm:text-sm">
+                            <div class="col-start-2 grid grid-cols-2 gap-x-8">
+                              <div v-for="item in category.children_recursive.slice(0, 2)" :key="item.id" class="group relative text-base sm:text-sm">
                                 <div class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                  <img :src="item.imageSrc" :alt="item.imageAlt" class="object-cover object-center" />
+                                  <img :src="item.url" class="object-cover object-center" />
                                 </div>
-                                <a :href="item.href" class="mt-6 block font-medium text-gray-900">
+                                <a :href="route('customer.category.list', item.slug)" class="mt-6 block font-medium text-gray-900">
                                   <span class="absolute inset-0 z-10" aria-hidden="true" />
                                   {{ item.name }}
                                 </a>
                                 <p aria-hidden="true" class="mt-1">Shop now</p>
                               </div>
-                            </div> -->
+                            </div>
 
                             <div class="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
                               <div v-for="child in category.children_recursive" :key="child.id">

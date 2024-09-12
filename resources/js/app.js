@@ -13,9 +13,10 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 // import 'flowbite/dist/flowbite.min.css';
 // import 'pagedone/src/css/pagedone.css';
 // import 'pagedone/src/js/pagedone.js';
+import store from './store';
 
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'VShop';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -26,6 +27,7 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(ElementPlus)
             .use(VueSweetalert2)
+            .use(store)
             .mount(el);
     },
     progress: {

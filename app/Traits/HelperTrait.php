@@ -2,16 +2,19 @@
 
 namespace App\Traits;
 
+use App\Http\Resources\OrderResource;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\CustomerAddress;
+use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Str;
 
 trait HelperTrait
 {
     public function getCategories()
     {
-        return Category::with(['childrenRecursive', 'parentRecursive'])->whereNull('parent_id');
+        return Category::with('childrenRecursive')->whereNull('parent_id');
     }
 
     public function getBrands()
@@ -21,7 +24,7 @@ trait HelperTrait
 
     public function getProductBySlug($slug)
     {
-        return Product::with('images')->where('slug', $slug)->first();
+        return Product::with(['images', 'category'])->where('slug', $slug)->first();
     }
 
     public function getCateogryBySlug($slug)
@@ -140,6 +143,20 @@ trait HelperTrait
             'customer_id' => auth('customer')->user()->id, 
             'is_main' => 1
         ])->first();
+    }
+
+    public function getOrder($orderId)
+    {
+        $order = Order::with(['orderItems.product.images', 'customerAddress.customer'])->where('id', $orderId)->first();
+        return new OrderResource($order);
+    }
+
+    public function uniqueImageName($image, $path)
+    {
+        $uniqueName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+        $publicPath = public_path($path);
+        $image->move($publicPath, $uniqueName);
+        return $uniqueName;
     }
 }
 

@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\CustomerAddress;
-use App\Models\Order;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,9 +13,11 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Services\Customer\CustomerAccountService;
+use App\Traits\HelperTrait;
 
 class CustomerAccountController extends Controller
 {
+    use HelperTrait;
 
     protected $customerAccountService;
 
@@ -28,7 +28,27 @@ class CustomerAccountController extends Controller
 
     public function info()
     {
-        return Inertia::render('Customer/Account/Info');
+        return Inertia::render('Customer/Account/Info', [
+            'title' => 'Account Information',
+        ]);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $result = $this->customerAccountService->changePassword($request);
+        if($result){
+            return redirect()->back()->with('success', 'Password changed successfully.');
+        }
+        return redirect()->back()->with('error', 'Failed to change password.');
+    }
+
+    public function updateAccountInfo(Request $request)
+    {
+        $result = $this->customerAccountService->updateAccountInfo($request);
+        if($result){
+            return redirect()->back()->with('success', 'Account info updated successfully.');
+        }
+        return redirect()->back()->with('error', 'Failed to update account info.');
     }
 
     public function orderList(Request $request)
@@ -51,26 +71,8 @@ class CustomerAccountController extends Controller
     public function orderDetails($orderId)
     {
         return Inertia::render('Customer/Account/Order/Details', [
-            'order' => $this->customerAccountService->getOrder($orderId)
+            'order' => $this->getOrder($orderId)
         ]);
-    }
-
-    public function changePassword(ChangePasswordRequest $request)
-    {
-        $result = $this->customerAccountService->changePassword($request);
-        if($result){
-            return redirect()->back()->with('success', 'Password changed successfully.');
-        }
-        return redirect()->back()->with('error', 'Failed to change password.');
-    }
-
-    public function updateAccountInfo(Request $request)
-    {
-        $result = $this->customerAccountService->updateAccountInfo($request);
-        if($result){
-            return redirect()->back()->with('success', 'Account info updated successfully.');
-        }
-        return redirect()->back()->with('error', 'Failed to update account info.');
     }
 
     public function address()
@@ -89,7 +91,6 @@ class CustomerAccountController extends Controller
         return redirect()->back()->with('error', 'Failed to add address.');
     }
 
-
     public function updateAddress(Request $request, $addressId)
     {
         $result = $this->customerAccountService->updateAddress($request, $addressId);
@@ -106,6 +107,11 @@ class CustomerAccountController extends Controller
             return redirect()->back()->with('success', 'Address deleted successfully.');
         }
         return redirect()->back()->with('error', 'Failed to delete address.');
+    }
+
+    public function location()
+    {
+        return Inertia::render('Customer/Account/Location');
     }
 
 

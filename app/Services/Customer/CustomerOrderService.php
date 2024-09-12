@@ -34,7 +34,7 @@ class CustomerOrderService
                     }
                 }
             }
-
+            
             $stripe = new StripeClient(env('STRIPE_SECRET_KEY'));
             $lineItems = [];
             foreach($mergeData as $item){
@@ -55,7 +55,7 @@ class CustomerOrderService
                 $sessionId = $stripe->checkout->sessions->retrieve($request->sessionId);
                 return $sessionId->url;
             }
-
+            
             $checkoutSession = $stripe->checkout->sessions->create([
                 'line_items' => $lineItems,
                 'mode' => 'payment',
@@ -67,7 +67,7 @@ class CustomerOrderService
             $mainAddress->update($address);
             $order = Order::create([
                 'total_price' => $totalPrice, 
-                'status' => 'pending', 
+                'status' => 'unpaid', 
                 'session_id' => $checkoutSession->id, 
                 'customer_address_id' => $mainAddress->id
             ]);
@@ -85,7 +85,7 @@ class CustomerOrderService
 
             Payment::create([
                 'order_id' => $order->id,
-                'status' => 'pending',
+                'status' => 'unpaid',
                 'amount' => $totalPrice,
                 'type' => 'stripe',
             ]);
@@ -110,13 +110,23 @@ class CustomerOrderService
                 return false;
             }
             $order = Order::where('session_id', $session->id)->first();
-            if (!$order) {
+            $orderItems = OrderItem::where('order_id', $order->id)->with('product')->get();
+            /* Giảm số lượng product đi khi khách đặt hàng thành công */
+            foreach ($orderItems as $item) {
+                $item->product->decrement('quantity', $item->quantity);
+            }
+
+            if (!$order || !$order->payment) {
                 throw new NotFoundHttpException();
                 return false;
             }
-            if ($order->status == 'pending') {
-                $order->status = 'success';
+            if ($order->status == 'unpaid') {
+                $order->status = 'paided';
                 $order->save();
+            }
+            if($order->payment->status == 'unpaid'){
+                $order->payment->status = 'paided';
+                $order->payment->save();
             }
             return true;
         } catch (\Exception $e) {

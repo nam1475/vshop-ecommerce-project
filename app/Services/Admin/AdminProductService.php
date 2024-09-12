@@ -17,21 +17,20 @@ class AdminProductService
 
     public function getProducts()
     {
-        return Product::with('category', 'brand', 'images');
+        $query = Product::query();
+        if(request()->query()) {
+            $brands = request()->query('filter');
+            $query->whereHas('brand', function($q) use ($brands) {
+                $q->whereIn('name', $brands);
+            });        
+        }
+        return $query->with('category', 'brand', 'images');
+        // return Product::with('category', 'brand', 'images');
     }
 
     public function getBrands()
     {
         return Brand::all();
-    }
-    
-    public function uniqueImageName($image)
-    {
-        $uniqueName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-        $path = 'product_images/';
-        $publicPath = public_path($path);
-        $image->move($publicPath, $uniqueName);
-        return $uniqueName;
     }
     
     public function getProductById($id)
@@ -48,7 +47,7 @@ class AdminProductService
             if($request->hasFile('product_images')) {
                 $productImages = $request->file('product_images');
                 foreach ($productImages as $image) {
-                    $uniqueName = $this->uniqueImageName($image);
+                    $uniqueName = $this->uniqueImageName($image, 'product_images/');
                     ProductImage::create([
                         'product_id' => $product->id,
                         'url' => '/product_images/' . $uniqueName,
@@ -71,7 +70,7 @@ class AdminProductService
             if($request->hasFile('product_images')) {
                 $productImages = $request->file('product_images');
                 foreach ($productImages as $image) {
-                    $uniqueName = $this->uniqueImageName($image);
+                    $uniqueName = $this->uniqueImageName($image, 'product_images/');
                     ProductImage::create([
                         'product_id' => $product->id,
                         'url' => '/product_images/' . $uniqueName,
@@ -87,9 +86,16 @@ class AdminProductService
         }
     }
 
-    public function delete($id)
+    public function delete($request, $id)
     {
         try{
+            if($request->has('ids')) {
+                $products = Product::whereIn('id', $request->input('ids'))->get();
+                foreach($products as $product){
+                    $product->delete();
+                }
+                return true;
+            }
             $product = Product::find($id);
             $result = $product->delete();
             return $result;

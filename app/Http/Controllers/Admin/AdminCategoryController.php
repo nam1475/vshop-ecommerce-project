@@ -68,5 +68,13 @@ class AdminCategoryController extends Controller
         return redirect()->back()->with('error', 'Something went wrong.');
     }
 
+    public function deleteImage($id){
+        $result = $this->adminCategoryService->deleteImage($id);
+        if($result){
+            return redirect()->back()->with('success', 'Image deleted successfully.');
+        }
+        return redirect()->back()->with('error', 'Failed to delete image.');
+    }
+
     
 }

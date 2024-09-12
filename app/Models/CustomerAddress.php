@@ -11,11 +11,12 @@ class CustomerAddress extends Model
 
     protected $fillable = [
         'type',
-        'address1',
-        'address2',
-        'city',
-        'state',
+        'name',
         'phone',
+        'address',
+        'province',
+        'district',
+        'ward',
         'zip_code',
         'is_main',
         'country_code',

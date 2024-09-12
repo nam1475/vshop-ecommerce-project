@@ -17,6 +17,5 @@ class CustomerProductController extends Controller
         return Inertia::render('Customer/Product/Details', [
             'product' => $this->getProductBySlug($slug),
         ]);
-        
     }
 }

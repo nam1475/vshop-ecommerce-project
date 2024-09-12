@@ -36,19 +36,7 @@ function handlePictureCardPreview(file) {
 }
 
 function handleRemove(file) {
-  if (file.id) {
-    form.delete(route("admin.product.delete.image", file.id), {
-      onSuccess: (page) => {
-        success(page);
-      },
-      onError: (page) => {
-        error(page);
-      },
-    });
-  }
-  else{
-    form.product_images.splice(form.product_images.indexOf(file.raw), 1);
-  }
+  form.product_images.splice(form.product_images.indexOf(file.raw), 1);
 }
 
 function handleFileUpload(file) {

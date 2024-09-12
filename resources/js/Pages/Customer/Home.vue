@@ -1,19 +1,23 @@
 <script setup>
 import ProductList from '@/Pages/Customer/Components/ProductList.vue'
-import Hero from '@/Pages/Customer/Components/Hero.vue'
+import Slider from '@/Pages/Customer/Components/Slider.vue'
 import Main from '@/Pages/Customer/Components/Layout/Main.vue'  
-import { defineProps } from 'vue'
+import { computed, defineProps } from 'vue'
+import { usePage } from '@inertiajs/vue3';
 
 defineProps({
-  products: Array
+  products: Array,
 });
+
+const categories = computed(() => usePage().props.categories);
 
 </script>
 
 <template>
 <Main>
-  <!-- Hero -->
-  <Hero />
+  <!-- Slider -->
+  <Slider :categories="categories"/>
+  <!-- <Slider /> -->
   
   <!-- Content -->
   <ProductList :products="products" />

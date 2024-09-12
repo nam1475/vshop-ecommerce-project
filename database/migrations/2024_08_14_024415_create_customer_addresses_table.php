@@ -15,11 +15,12 @@ return new class extends Migration
         Schema::create('customer_addresses', function (Blueprint $table) {
             $table->id();
             $table->string('type', 45)->nullable();
-            $table->string('address1', 255)->nullable();
-            $table->string('address2', 255)->nullable();
-            $table->string('city', 255)->nullable();
-            $table->string('state', 45)->nullable();
-            $table->string('phone', 20)->nullable();
+            $table->string('name', 30)->nullable();
+            $table->string('phone', 30)->nullable();
+            $table->string('address', 255)->nullable();
+            $table->string('province', 50)->nullable();
+            $table->string('district', 50)->nullable();
+            $table->string('ward', 50)->nullable();
             $table->string('zip_code', 45)->nullable();
             $table->boolean('is_main')->default(1);
             $table->string('country_code', 3)->nullable();

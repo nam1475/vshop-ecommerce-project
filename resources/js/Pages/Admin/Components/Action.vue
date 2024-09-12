@@ -1,4 +1,43 @@
 <script setup>
+import { computed, defineEmits, defineProps } from 'vue';
+import { router } from '@inertiajs/vue3';
+import { success, error, warning } from '@/alert.js';
+import { useStore } from 'vuex';
+
+const props = defineProps({
+  routeName: String
+});
+
+// const emit = defineEmits(['deleteSelected']);
+
+const store = useStore();
+// const checkedRows = computed(() => store.getters['checkbox/checkedRows'].includes(17));
+const checkedRows = computed(() => store.getters['checkbox/checkedRows']);
+
+function deleteChecked(){
+  // emit('deleteChecked', checkedRows);
+  
+  warning()
+    .then((result) => {
+      if (result.isConfirmed) {
+        try{
+          router.delete(route(`${props.routeName}.delete`, {ids: checkedRows.value}), 
+          {
+            onSuccess: (page) => {
+              success(page);
+              store.dispatch('checkbox/setCheckedAllRows', []);
+            },
+            onError: (page) => {
+              error(page);
+            },
+          });
+        } catch(err){
+          console.log(err);
+        }
+      }
+    });
+}
+
 </script>
 
 <template>
@@ -37,17 +76,21 @@
       <li>
         <a
           href="#"
-          class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          class="block py-2 px-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >Mass Edit</a
         >
       </li>
     </ul>
     <div class="py-1">
-      <a
-        href="#"
-        class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-        >Delete all</a
+      <button
+        type="button"
+        :disabled="!checkedRows.length" 
+        @click="deleteChecked"
+        class="block py-2 w-full text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+        :class="!checkedRows.length ? 'cursor-not-allowed' : ''"
       >
+        Delete selection
+      </button>
     </div>
   </div>
 </template>

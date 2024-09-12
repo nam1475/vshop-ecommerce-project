@@ -1,19 +1,37 @@
 <script setup>
 import Main from '@/Pages/Admin/Components/Layout/Main.vue';
 import { useForm } from "@inertiajs/vue3";
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
 import { success, error } from "@/alert.js";
 import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
+import { Plus } from "@element-plus/icons-vue";
 
 defineProps({
-    categories: Array
+  categories: Array
 });
 
 const form = useForm({
-    name: "",
-    parent_id: "",
+  name: "",
+  parent_id: "",
+  url: null,
 });
+
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
+
+function handlePictureCardPreview(file) {
+  dialogImageUrl.value = file.url;
+  dialogVisible.value = true;
+}
+
+function handleRemove(file) {
+  form.url = null;
+}
+
+function handleFileUpload(file) {
+  form.url = file.raw;
+}
 
 function addCategory() {
   form.post(route("admin.category.store"), {
@@ -28,6 +46,7 @@ function addCategory() {
     },
   });
 }
+
 
 </script>
 
@@ -66,6 +85,27 @@ function addCategory() {
           :category="category"
         />
       </select>
+    </div>
+
+    <div class="col-span-2">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Images</label
+      >
+      <el-upload
+        list-type="picture-card"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove"
+        :auto-upload="false"
+        :on-change="handleFileUpload"
+        :limit="1"
+      >
+        <el-icon><Plus /></el-icon>
+      </el-upload>
+
+      <el-dialog v-model="dialogVisible">
+        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+      </el-dialog>
     </div>
   </div>
 </FormAction>

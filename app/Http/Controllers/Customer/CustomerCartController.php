@@ -28,11 +28,20 @@ class CustomerCartController extends Controller
         ]);
     }
 
-    public function store(Request $request, $productId)
+    public function store(Request $request, $id)
     {
-        $result = $this->cartService->store($request, $productId);
+        $result = $this->cartService->store($request, $id);
         if($result) {
             return redirect()->back()->with('success', 'Product added to cart successfully.');
+        }
+        return redirect()->back()->with('error', 'Something went wrong. Please try again.');
+    }
+
+    public function orderAgain($id)
+    {
+        $result = $this->cartService->orderAgain($id);
+        if($result) {
+            return redirect()->back()->with('success', 'Cart updated successfully.');
         }
         return redirect()->back()->with('error', 'Something went wrong. Please try again.');
     }
@@ -46,7 +55,7 @@ class CustomerCartController extends Controller
         return redirect()->back()->with('error', 'Something went wrong. Please try again.');
     }
 
-    public function delete(Request $request, $cartId)
+    public function delete($cartId)
     {
         $result = $this->cartService->delete($cartId);
         if($result) {

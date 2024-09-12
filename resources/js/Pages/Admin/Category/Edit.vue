@@ -1,23 +1,38 @@
 <script setup>
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
-import { defineProps } from "vue";
-import { useForm } from "@inertiajs/vue3";
+import { defineProps, ref } from "vue";
+import { router, useForm } from "@inertiajs/vue3";
 import { success, error } from "@/alert.js";
+import { Plus } from "@element-plus/icons-vue";
 
 const props = defineProps({
-    category: Object,
-    categories: Array
+  category: Object,
+  categories: Array
 });
 
 const form = useForm({
-    id: props.category.id,
-    name: props.category.name,
-    parent_id: props.category.parent_id,
+  name: props.category.name,
+  parent_id: props.category.parent_id != null ? props.category.parent_id : "",
+  url: props.category.url,
 });
 
-function editCategory() {
-  form.put(route("admin.category.update", props.category.id), {
+const uploadImage = ref([]);
+if(props.category.url != null){
+  uploadImage.value.push({'url': props.category.url});
+}
+
+function updateCategory() {
+  const formData = new FormData();
+  formData.append("name", form.name);
+  formData.append("parent_id", form.parent_id);
+  formData.append("_method", "PUT");
+  // uploadImage.value.forEach((file) => {
+  //   formData.append("url[]", file);
+  // });
+  formData.append("image", uploadImage.value[0]);
+
+  router.post(route("admin.category.update", props.category.id), formData, {
     onSuccess: (page) => {
         success(page);
     },
@@ -27,10 +42,39 @@ function editCategory() {
   });
 }
 
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
+
+function handlePictureCardPreview(file) {
+  dialogImageUrl.value = file.url;
+  dialogVisible.value = true;
+}
+
+function handleRemove(file) {
+  if (!file.raw) {
+    form.delete(route("admin.category.delete.image", props.category.id), {
+      onSuccess: (page) => {
+        success(page);
+        uploadImage.value = [];
+      },
+      onError: (page) => {
+        error(page);
+      },
+    });
+  }
+  else{
+    uploadImage.value.splice(uploadImage.value.indexOf(file.raw), 1);
+  }
+}
+
+function handleFileUpload(file) {
+  uploadImage.value.push(file.raw);
+}
+
 </script>
 
 <template>
-<FormAction title="Edit Category" :action="editCategory">
+<FormAction title="Edit Category" :action="updateCategory">
   <div class="grid gap-4 mb-4 grid-cols-3">
     <div class="col-span-1">
       <label
@@ -65,6 +109,28 @@ function editCategory() {
           :selected="form.id == ca.id"
         />
       </select>
+    </div>
+
+    <div class="col-span-3">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >Images</label
+      >
+      <el-upload
+        list-type="picture-card"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove"
+        :auto-upload="false"
+        :on-change="handleFileUpload"
+        :limit="1"
+        :file-list="uploadImage ? uploadImage : []"
+      >
+        <el-icon><Plus /></el-icon>
+      </el-upload>
+
+      <el-dialog v-model="dialogVisible">
+        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+      </el-dialog>
     </div>
   </div>
 </FormAction>

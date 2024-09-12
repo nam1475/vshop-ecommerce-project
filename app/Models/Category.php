@@ -11,7 +11,7 @@ class Category extends Model
 {
     use HasFactory, HasSlug;
 
-    protected $fillable = ['name', 'parent_id', 'slug'];
+    protected $fillable = ['name', 'parent_id', 'slug', 'url'];
 
     // public function getSlugParents($categoryParent)
     // {
@@ -26,9 +26,12 @@ class Category extends Model
     {
         return SlugOptions::create()
             ->generateSlugsFrom(function ($model) {
+                if($model->parent_id == null) {
+                    return $model->name;
+                }
                 $categoryParent = Category::find($model->parent_id);
                 // $parentSlug = $this->getSlugParents($categoryParent);
-                return $categoryParent->slug . '-' . strtolower($model->name);
+                return $categoryParent->slug . '-' . $model->name;
             })
             ->saveSlugsTo('slug');
     }
@@ -51,7 +54,7 @@ class Category extends Model
 
     public function childrenRecursive()
     {
-        return $this->children()->with('childrenRecursive');
+        return $this->children()->with(['childrenRecursive', 'parent']);
         // return $this->children()->with(['childrenRecursive', 'products']);
     }
 
@@ -60,10 +63,10 @@ class Category extends Model
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    public function parentRecursive()
-    {
-        return $this->parent()->with('parentRecursive');
-    }
+    // public function parentRecursive()
+    // {
+    //     return $this->parent()->with('parentRecursive');
+    // }
 
 
 }

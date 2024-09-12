@@ -77,7 +77,6 @@ function priceFilter() {
   });
 }
 
-
 watch(checkedBrands, () => {
   updateFilteredProducts();
 });
@@ -128,9 +127,10 @@ const mobileFiltersOpen = ref(false);
         <h2 class="text-4xl font-bold tracking-tight text-gray-900">{{ category.name }}</h2>
         
         <div class="mt-6 space-y-12 lg:grid lg:grid-cols-4 lg:gap-x-6 lg:space-y-0">
-          <div class="group relative" v-for="category in childrenCategory" :key="category.id">
+          <div class="group relative mb-6" v-for="category in childrenCategory" :key="category.id">
             <div class="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-              <img src="https://tailwindui.com/img/ecommerce-images/home-page-02-edition-01.jpg" class="h-full w-full object-cover object-center">
+              <!-- <img src="https://tailwindui.com/img/ecommerce-images/home-page-02-edition-01.jpg" class="h-full w-full object-cover object-center"> -->
+              <img :src="category.url" class="h-full w-full object-cover object-center">
             </div>
             <h3 class="text-base font-bold text-gray-900 mt-3">
               <Link :href="route('customer.category.list', category.slug)">
