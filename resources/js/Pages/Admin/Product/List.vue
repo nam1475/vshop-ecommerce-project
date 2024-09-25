@@ -1,51 +1,46 @@
 <script setup>
-import { computed, defineProps, ref } from "vue";
+import { computed, defineProps, reactive, ref, watch } from "vue";
 import Table from "@/Pages/Admin/Components/Table.vue";
 import SingleProduct from "@/Pages/Admin/Product/Single.vue";
 import { useStore } from "vuex";
+import CheckboxAll from "@/Pages/Admin/Components/CheckboxAll.vue";
 
 const props = defineProps({
   products: Object,
   brands: Array,
+  categories: Array,
 });
 
-const store = useStore();
-
-const isCheckedAll = ref(false); 
-// const checkedRows = computed(() => store.getters['checkbox/checkedRows']);
-// const checkedAllRows = ref([]);
-
-function toggleCheckAll() {
-  isCheckedAll.value = !isCheckedAll.value;
-  if (isCheckedAll.value) {
-    // checkedAllRows.value = props.products.data.map(product => product.id);
-    // setCheckedAllRows(checkedAllRows.value);
-    setCheckedAllRows(props.products.data);
+const data = reactive([
+  {
+    name: 'Brands',
+    values: props.brands
+  },
+  {
+    name: 'Categories',
+    values: props.categories
   }
-  else{
-    // checkedAllRows.value = [];
-    // setCheckedAllRows(checkedAllRows.value);
-    setCheckedAllRows([]);
-  } 
-}
+]); 
 
-function setCheckedAllRows(values) {
-  store.dispatch('checkbox/setCheckedAllRows', values);
-}
+// watch(() => props.brands, (newVal) => {
+//   data[0].values = newVal;
+// });
+
+// watch(() => props.categories, (newVal) => {
+//   data[1].values = newVal;
+// });  
+
 
 </script>
 
 <template>
-  <!-- <Table :href="route('admin.product.add')" :links="products.links" :filterOptions="brands" routeName="admin.product"> -->
-  <Table :links="products.links" :filterOptions="brands" routeName="admin.product">
+  <!-- <Table :links="products.links" :filterOptions="brands" routeName="admin.product"> -->
+  <Table :links="products.links" :filterOptions="data" routeName="admin.product">
     <template #tableHeader>
       <tr>
         <th scope="col" class="p-4">
-          <div class="flex items-center">
-              <input id="checkbox-all" v-model="isCheckedAll" @click="toggleCheckAll" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-              <label for="checkbox-all" class="sr-only">checkbox</label>
-          </div>  
-        </th>
+          <CheckboxAll :data="products.data" />  
+        </th> 
         <th scope="col" class="px-4 py-3">ID</th>  
         <th scope="col" class="px-4 py-3">Name</th> 
         <th scope="col" class="px-4 py-3">Slug</th> 

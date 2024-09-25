@@ -1,44 +1,35 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Http\Services\Admin;
 
-use App\Models\Brand;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use App\Traits\HelperTrait;
+use App\Traits\Filterable;
+use App\Traits\Searchable;
 
 class AdminProductService
 {
-    use HelperTrait;
+    use HelperTrait, Filterable, Searchable;
 
     public function getProducts()
     {
         $query = Product::query();
-        if(request()->query()) {
-            $brands = request()->query('filter');
-            $query->whereHas('brand', function($q) use ($brands) {
-                $q->whereIn('name', $brands);
-            });        
+        if($filters = request()->query('filter', [])) { 
+            $this->scopeFilters($query, $filters, Product::class); 
+        }
+        if($search = request()->query('search')) {
+            $this->scopeSearch($query, $search, Product::class);
         }
         return $query->with('category', 'brand', 'images');
-        // return Product::with('category', 'brand', 'images');
-    }
-
-    public function getBrands()
-    {
-        return Brand::all();
     }
     
     public function getProductById($id)
     {
-        // return Product::where('id', $id)->with('category', 'brand', 'images')->first();
         return Product::with('category', 'brand', 'images')->find($id);
     }
-
+    
     public function store($request)
     {
         try{
@@ -90,10 +81,7 @@ class AdminProductService
     {
         try{
             if($request->has('ids')) {
-                $products = Product::whereIn('id', $request->input('ids'))->get();
-                foreach($products as $product){
-                    $product->delete();
-                }
+                $this->deleteRows($request, Product::class);
                 return true;
             }
             $product = Product::find($id);

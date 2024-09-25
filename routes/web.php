@@ -15,6 +15,9 @@ use App\Http\Controllers\Customer\CustomerOrderController;
 use App\Http\Controllers\Customer\CustomerProductController;
 use App\Http\Controllers\Customer\CustomerAccountController;
 use App\Http\Controllers\Admin\AdminCustomerController;
+use App\Http\Controllers\Admin\AdminPermissionController;
+use App\Http\Controllers\Admin\AdminRoleController;
+use App\Http\Controllers\Admin\AdminUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,12 +109,12 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::controller(AdminProductController::class)->prefix('product')->name('product.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
+            Route::get('/list', 'list')->name('list')->middleware('permission:list product');
+            Route::get('/add', 'add')->name('add')->middleware('permission:add product');
             Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::get('/edit/{id}', 'edit')->name('edit')->middleware('permission:edit product');
             Route::put('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
+            Route::delete('/delete/{id?}', 'delete')->name('delete')->middleware('permission:delete product');
             Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
         });
 
@@ -123,7 +126,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
             Route::put('/update/{id}', 'update')->name('update');
             // Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
         });
 
         Route::controller(AdminBrandController::class)->prefix('brand')->name('brand.')->group(function () {
@@ -132,7 +135,7 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
             Route::post('/store', 'store')->name('store');
             Route::get('/edit/{id}', 'edit')->name('edit');
             Route::put('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
         });
 
         Route::controller(AdminOrderController::class)->prefix('order')->name('order.')->group(function () {
@@ -141,13 +144,42 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
             Route::post('/store', 'store')->name('store');
             Route::get('/edit/{id}', 'edit')->name('edit');
             Route::patch('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
         });
-
+        
         Route::controller(AdminCustomerController::class)->prefix('customer')->name('customer.')->group(function () {
             Route::get('/list', 'list')->name('list');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
         });
+        
+        Route::controller(AdminRoleController::class)->prefix('role')->name('role.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/add', 'add')->name('add');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::patch('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
+        });
+
+        Route::controller(AdminPermissionController::class)->prefix('permission')->name('permission.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/add', 'add')->name('add');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::patch('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
+        });
+
+        Route::controller(AdminUserController::class)->prefix('user')->name('user.')->group(function () {
+            Route::get('/list', 'list')->name('list');
+            Route::get('/add', 'add')->name('add');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/edit/{id}', 'edit')->name('edit');
+            Route::patch('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id?}', 'delete')->name('delete');
+        });
+
+
 
 
 

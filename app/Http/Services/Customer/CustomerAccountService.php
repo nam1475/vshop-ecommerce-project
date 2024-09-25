@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Customer;
+namespace App\Http\Services\Customer;
 
 use App\Http\Resources\CartResource;
 use App\Http\Resources\OrderResource;
@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\Order;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class CustomerAccountService
@@ -74,15 +75,27 @@ class CustomerAccountService
     public function storeAddress($request)
     {
         try{
+            DB::beginTransaction();
             $customerAddresses = $this->getCustomerAddresses();
-            $result = CustomerAddress::create($request->all());
+            $result = CustomerAddress::create([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'province' => $request->province['name'],
+                'district' => $request->district['name'],
+                'ward' => $request->ward['name'],
+                'is_main' => $request->is_main,
+                'customer_id' => $request->customer_id
+            ]);
             foreach($customerAddresses as $address){
-                if($result->is_main == 1){
+                if($result->is_main == 1 && $address->is_main == 1){
                     $address->update(['is_main' => 0]);
                 }
             }
+            DB::commit();
             return $result;
         } catch (\Exception $e) {
+            DB::rollBack();
             throw $e;
             return false;
         }
@@ -93,15 +106,20 @@ class CustomerAccountService
         try{
             $customerAddresses = $this->getCustomerAddresses();
             foreach($customerAddresses as $address){
+                /* Nếu lặp đến address hiện tại và chọn làm main */
                 if($address->id == $addressId && $request->is_main == 1){
                     $address->update($request->all());
                 }
+                /* Nếu có 1 address đc chọn làm main mà đang có 1 address khác làm main thì sửa is_main của 
+                address đó thành 0 */
+                else if($request->is_main == 1 && $address->is_main == 1){
+                    $address->update(['is_main' => 0]);
+                }
+                /* Nếu lặp đến address hiện tại mà ko chọn làm main thì chỉ update các trường khác và thoát 
+                vòng lặp */
                 else if($address->id == $addressId && $request->is_main == 0){
                     $address->update($request->all());
                     break;
-                }
-                else if($request->is_main == 1 && $address->is_main == 1){
-                    $address->update(['is_main' => 0]);
                 }
             }
             // $result = CustomerAddress::find($addressId)->update($request->all());

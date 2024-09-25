@@ -1,29 +1,33 @@
 import Swal from "sweetalert2";
 
 export function success(page){
-    Swal.fire({
-        icon: "success",
-        title: page.props.flash.success,
-        toast: true,
-        position: "top-right",
-        showConfirmButton: false,
-        timer: 4000, 
-        showCloseButton: true,
-        timerProgressBar: true
-    });
+    if(page.props.flash.success){
+        Swal.fire({
+            icon: "success",
+            title: page.props.flash.success,
+            toast: true,
+            position: "top-right",
+            showConfirmButton: false,
+            timer: 4000, 
+            showCloseButton: true,
+            timerProgressBar: true
+        });
+    }
 }
 
 export function error(page){
-    Swal.fire({
-        icon: "error",
-        title: page.props.flash.error,
-        toast: true,
-        position: "top-right",
-        showConfirmButton: false,
-        timer: 4000, 
-        showCloseButton: true,
-        timerProgressBar: true
-    });
+    if(page.props.flash.error){
+        Swal.fire({
+            icon: "error",
+            title: page.props.flash.error,
+            toast: true,
+            position: "top-right",
+            showConfirmButton: false,
+            timer: 4000, 
+            showCloseButton: true,
+            timerProgressBar: true
+        });
+    }
 }
 
 export function warning(){

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Customer;
+namespace App\Http\Services\Customer;
 
 use App\Models\CartItem;
 use App\Models\UserAddress;

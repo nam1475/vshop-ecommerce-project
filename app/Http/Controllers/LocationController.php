@@ -24,5 +24,11 @@ class LocationController extends Controller
         $response = Http::get("https://provinces.open-api.vn/api/d/{$districtCode}?depth=2");
         return $response->json()['wards'];
     }
+
+    public function getProvinceName($provinceCode)
+    {
+        $response = Http::get("https://provinces.open-api.vn/api/p/{$provinceCode}");
+        return $response->json()['name'];
+    }
 }
 

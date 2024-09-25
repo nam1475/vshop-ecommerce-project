@@ -7,7 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Services\Admin\AdminProductService;
+use App\Http\Services\Admin\AdminProductService;
 
 class CustomerHomeController extends Controller
 {

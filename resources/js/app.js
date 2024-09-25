@@ -13,10 +13,18 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 // import 'flowbite/dist/flowbite.min.css';
 // import 'pagedone/src/css/pagedone.css';
 // import 'pagedone/src/js/pagedone.js';
+// import 'swiper/swiper-bundle.css'; 
+// import 'swiper/swiper.min.css'; 
 import store from './store';
-
+import router from './router';
+import { abilitiesPlugin } from '@casl/vue'
+import ability from './services/ability';
+import { success, error } from "@/alert.js";
+import { usePage } from '@inertiajs/vue3';
 
 const appName = import.meta.env.VITE_APP_NAME || 'VShop';
+const userAbility = ability();
+// const page = usePage();
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -28,6 +36,11 @@ createInertiaApp({
             .use(ElementPlus)
             .use(VueSweetalert2)
             .use(store)
+            // .use(abilitiesPlugin, userAbility)
+            // .provide('ability', ability)
+            // .use(router)
+            // .use(success(page))
+            // .use(error(page))
             .mount(el);
     },
     progress: {

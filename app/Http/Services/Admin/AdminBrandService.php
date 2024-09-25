@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Http\Services\Admin;
 
 use App\Models\Brand;
+use App\Traits\HelperTrait;
+use App\Traits\Searchable;
 
 class AdminBrandService
 {
+    use HelperTrait, Searchable;
+    
     public function getBrandById($id)
     {
         return Brand::find($id);
@@ -13,7 +17,11 @@ class AdminBrandService
 
     public function getBrands()
     {
-        return Brand::paginate(10);
+        $query = Brand::query();
+        if($search = request()->query('search')) {
+            $this->scopeSearch($query, $search, Brand::class);
+        }
+        return $query->paginate(10);
     }
 
     public function store($request)
@@ -38,9 +46,13 @@ class AdminBrandService
         }
     }
 
-    public function delete($id)
+    public function delete($request, $id)
     {
         try{
+            if($request->has('ids')) {
+                $this->deleteRows($request, Brand::class);
+                return true;
+            }
             $brand = $this->getBrandById($id);
             $result = $brand->delete();
             return $result;

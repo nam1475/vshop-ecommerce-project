@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\Admin\AdminCategoryService;
+use App\Http\Services\Admin\AdminCategoryService;
 use Inertia\Inertia;
 use App\Traits\HelperTrait;
 
@@ -17,19 +17,23 @@ class AdminCategoryController extends Controller
     public function __construct(AdminCategoryService $adminCategoryService)
     {
         $this->adminCategoryService = $adminCategoryService;
+        $this->middleware('permission:list category')->only(['list']);
+        $this->middleware('permission:add category')->only(['add', 'store']);
+        $this->middleware('permission:edit category')->only(['edit', 'update']);
+        $this->middleware('permission:delete category')->only(['delete', 'deleteImage']);
     }
 
     public function list()
     {
         return Inertia::render('Admin/Category/List', [
-            'categories' => $this->getCategories()->paginate(1),
+            'categories' => $this->adminCategoryService->getCategories()->paginate(1),
         ]);
     }
 
     public function add()
     {
         return Inertia::render('Admin/Category/Add', [
-            'categories' => $this->getCategories()->get(),
+            'categories' => $this->adminCategoryService->getCategories()->get(),
         ]);
     }
 
@@ -46,7 +50,7 @@ class AdminCategoryController extends Controller
     {
         return Inertia::render('Admin/Category/Edit', [
             'category' => $this->adminCategoryService->getCategoryById($id),
-            'categories' => $this->getCategories()->get(),
+            'categories' => $this->adminCategoryService->getCategories()->get(),
         ]);
     }
 
@@ -59,9 +63,9 @@ class AdminCategoryController extends Controller
         return redirect()->back()->with('error', 'Something went wrong.');
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id = null)
     {
-        $result = $this->adminCategoryService->delete($id);
+        $result = $this->adminCategoryService->delete($request, $id);
         if($result){
             return redirect()->route('admin.category.list')->with('success', 'Category deleted successfully.');
         }

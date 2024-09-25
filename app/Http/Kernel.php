@@ -70,6 +70,10 @@ class Kernel extends HttpKernel
         'redirectAdmin' => \App\Http\Middleware\RedirectAdmin::class,
         'customer' => \App\Http\Middleware\CustomerMiddleware::class,
         'session.guard' => \App\Http\Middleware\SessionGuard::class,
+        
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ];
 }
 

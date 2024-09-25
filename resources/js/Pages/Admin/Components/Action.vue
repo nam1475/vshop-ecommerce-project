@@ -8,15 +8,10 @@ const props = defineProps({
   routeName: String
 });
 
-// const emit = defineEmits(['deleteSelected']);
-
 const store = useStore();
-// const checkedRows = computed(() => store.getters['checkbox/checkedRows'].includes(17));
 const checkedRows = computed(() => store.getters['checkbox/checkedRows']);
 
 function deleteChecked(){
-  // emit('deleteChecked', checkedRows);
-  
   warning()
     .then((result) => {
       if (result.isConfirmed) {

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Services\Customer\CustomerAccountService;
+use App\Http\Services\Customer\CustomerAccountService;
 use App\Traits\HelperTrait;
 
 class CustomerAccountController extends Controller

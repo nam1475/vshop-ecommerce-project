@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, watch, reactive } from 'vue'
+import { ref, defineProps, watch, reactive, computed } from 'vue'
 import {
   Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, 
   TransitionChild, TransitionRoot,
@@ -12,31 +12,22 @@ import ProductList from '@/Pages/Customer/Components/ProductList.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 
 const props = defineProps({
-  products: Array,
+  products: Object,
   childrenCategory: Array,
   category: Object,
   brands: Array,
-  countProducts: Number
+  countProducts: Number,
+  priceMin: Number,
+  priceMax: Number
 });
 
 const categorySlug = props.category.slug;
 
 const sortOptions = reactive([
-  { name: 'Newest', href: '#', type: '' },
-  { name: 'Price: Low to High', href: '#', type: 'asc' },
-  { name: 'Price: High to Low', href: '#', type: 'desc' },
-]);
-
-const subCategories = [
-  { name: 'Totes', href: '#' },
-  { name: 'Backpacks', href: '#' },
-  { name: 'Travel Bags', href: '#' },
-  { name: 'Hip Bags', href: '#' },
-  { name: 'Laptop Sleeves', href: '#' },
-];
-
-const checkedBrands = ref([]);
-const checkedCategories = ref([]);
+  { name: 'Newest', type: '' },
+  { name: 'Price: Low to High', type: 'asc' },
+  { name: 'Price: High to Low', type: 'desc' },
+]); 
 
 const filters = [
   {
@@ -53,43 +44,66 @@ const filters = [
   },
 ];
 
-const filterPrice = useForm({
-    // prices: [0, 100000]
-    price: {
-      from: 0,
-      to: 500
-    }
+// const filterPrice = useForm({
+//   price: {
+//     min: 0,  
+//     max: 500
+//   }
+// });
+
+const params = new URLSearchParams(window.location.search);
+const queryPriceMax = ref(params.get('price_max'));
+const queryPriceMin = ref(params.get('price_min'));
+const querySort = ref(params.get('sort'));
+const queryBrands = ref(params.getAll('brands[]'));
+const queryCategories = ref(params.getAll('categories[]'));
+
+// const checkedBrands = ref([]);
+// const checkedCategories = ref([]);
+
+const filterPrice = reactive({
+  min: queryPriceMin.value ? queryPriceMin.value : null,  
+  max: queryPriceMax.value ? queryPriceMax.value : null
 });
 
-function priceFilter() {
-  filterPrice.transform(data => ({
-    // ...data,
-    price: {
-      from: data.price.from,
-      to: data.price.to
-    }
-  })).get(route('customer.category.list', categorySlug), {
-    /* preserveState: Giữ nguyên trạng thái hiện tại của trang (Ko reset lại trang) */
-    preserveState: true,
-    /* replace: Khi bạn không muốn tạo một mục mới trong lịch sử trình duyệt. Điều này hữu ích khi bạn không muốn 
-    người dùng có thể quay lại trang trước sau khi thực hiện một hành động cụ thể. */
-    replace: true,
-  });
-}
+// function priceFilter() {
+//   filterPrice.transform(data => ({
+//     // ...data,
+//     price: {
+//       min: data.min,
+//       max: data.max
+//     }
+//   })).get(route('customer.category.list', categorySlug), {
+//     /* preserveState: Giữ nguyên trạng thái hiện tại của trang (Ko reset lại trang) */
+//     preserveState: true,
+//     /* replace: Khi bạn không muốn tạo một mục mới trong lịch sử trình duyệt. Điều này hữu ích khi bạn không muốn 
+//     người dùng có thể quay lại trang trước sau khi thực hiện một hành động cụ thể. */
+//     replace: true,
+//     preserveScroll: true
+//   });
+// }
 
-watch(checkedBrands, () => {
+watch(queryBrands, () => {
   updateFilteredProducts();
 });
-watch(checkedCategories, () => {
+watch(queryCategories, () => {
   updateFilteredProducts();
 });
+
+const price = ref(queryPriceMin.value && queryPriceMax.value ? [queryPriceMin.value, queryPriceMax.value] : [props.priceMin, props.priceMax]);
 
 function updateFilteredProducts(type = '') {
     router.get(route('customer.category.list', categorySlug), 
     {
-      brands: checkedBrands.value,
-      categories: checkedCategories.value,
-       ...(type != '' && { sort: type })
+      brands: queryBrands.value,
+      categories: queryCategories.value,
+      // price_min: queryPriceMin.value,
+      // price_max: queryPriceMax.value,
+      price_min: price.value[0],
+      price_max: price.value[1],
+      // ...(queryPriceMin.value != null && { price_min: queryPriceMin.value }),
+      // ...(queryPriceMax.value != null && { price_max: queryPriceMax.value }),
+      ...(type != '' && { sort: type })
     }, 
     {
       preserveState: true,
@@ -99,23 +113,23 @@ function updateFilteredProducts(type = '') {
     );
 }
 
-function sortFilters(type, option) {
-  router.get(route('customer.category.list', categorySlug), 
-  {
-    sort: type
-  }, 
-  {
-    replace: true,
-    preserveScroll: true,
-    // onFinish: () => {
-    //   option['current'] = true;
-    //   console.log(option);
-    // }
-  },
-  );
-}
+// function sortFilters(type, option) {
+//   router.get(route('customer.category.list', categorySlug), 
+//   {
+//     sort: type
+//   }, 
+//   {
+//     replace: true,
+//     preserveScroll: true,
+//     // onFinish: () => {
+//     //   option['current'] = true;
+//     //   console.log(option);
+//     // }
+//   },
+//   );
+// }
 
-const mobileFiltersOpen = ref(false);
+
 </script>
 
 <template>
@@ -129,7 +143,6 @@ const mobileFiltersOpen = ref(false);
         <div class="mt-6 space-y-12 lg:grid lg:grid-cols-4 lg:gap-x-6 lg:space-y-0">
           <div class="group relative mb-6" v-for="category in childrenCategory" :key="category.id">
             <div class="relative h-80 w-full overflow-hidden rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-              <!-- <img src="https://tailwindui.com/img/ecommerce-images/home-page-02-edition-01.jpg" class="h-full w-full object-cover object-center"> -->
               <img :src="category.url" class="h-full w-full object-cover object-center">
             </div>
             <h3 class="text-base font-bold text-gray-900 mt-3">
@@ -144,7 +157,10 @@ const mobileFiltersOpen = ref(false);
       
       <!-- Filters -->
       <div class="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-12">
-        <h1 class="text-base font-semibold text-gray-500">{{ countProducts }} results</h1>
+        <div class="flex">
+          <h1 class="text-base font-semibold text-gray-500">{{ countProducts }} results</h1>
+          <!-- <a href="" v-for=""></a> -->
+        </div>
 
         <div class="flex items-center">
           <Menu as="div" class="relative inline-block text-left">
@@ -159,9 +175,9 @@ const mobileFiltersOpen = ref(false);
               <MenuItems class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="py-1">
                   <MenuItem v-for="option in sortOptions" :key="option.name" v-slot="{ active }">
-                    <a @click="updateFilteredProducts(option.type)" :href="option.href" :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']">
+                    <button @click="updateFilteredProducts(option.type)" :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-3 w-full py-2 text-sm']">
                       {{ option.name }}
-                    </a>
+                    </button>
                   </MenuItem>
                 </div>
               </MenuItems>
@@ -175,30 +191,21 @@ const mobileFiltersOpen = ref(false);
           <!-- Filters -->
           <form class="hidden lg:block" v-if="category.parent_id != null">
             <!-- Price -->
-            <div class="flex items-center justify-between space-x-3">
-              <div class="basis-1/3">
-                  <label for="filters-price-from"
-                      class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                      From
-                  </label>
-
-                  <input type="number" id="filters-price-from" placeholder="Min price"
-                      v-model="filterPrice.price.from"
-                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" />
+            <div class="space-x-3">
+              <div class="slider-demo-block">
+                <div class="flex items-center justify-center">
+                  <div>
+                    {{ price[0] }}$
+                  </div>
+                  <div class="mx-2">
+                    -
+                  </div>
+                  <div>
+                    {{ price[1] }}$
+                  </div>
+                </div>
+                <el-slider v-model="price" range @change="updateFilteredProducts()" :min="priceMin" :max="priceMax" />
               </div>
-              <div class="basis-1/3">
-                  <label for="filters-price-to"
-                      class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                      To
-                  </label>
-
-                  <input type="number" id="filters-price-to" v-model="filterPrice.price.to"
-                      placeholder="Max price"
-                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" />
-              </div>
-              <SecondaryButton class="self-end" @click="priceFilter()">
-                Ok
-              </SecondaryButton>
             </div>
 
             <!-- Other -->
@@ -235,7 +242,7 @@ const mobileFiltersOpen = ref(false);
               <DisclosurePanel class="pt-6">
                 <div class="space-y-4">
                   <div v-for="brand in brands" :key="brand.id" class="flex items-center">
-                    <input :id="`filter-${brand.id}`" :value="brand.id" v-model="checkedBrands" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                    <input :id="`filter-${brand.id}`" :value="brand.slug" v-model="queryBrands" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
                     <label :for="`filter-${brand.id}`" class="ml-3 text-sm text-gray-600">{{ brand.name }}</label>
                   </div>
                 </div>
@@ -255,7 +262,7 @@ const mobileFiltersOpen = ref(false);
               <DisclosurePanel class="pt-6">
                 <div class="space-y-4">
                   <div v-for="category in childrenCategory" :key="category.id" class="flex items-center">
-                    <input :id="`filter-${category.id}`" :value="category.id" v-model="checkedCategories" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                    <input :id="`filter-${category.id}`" :value="category.slug" v-model="queryCategories" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
                     <label :for="`filter-${category.id}`" class="ml-3 text-sm text-gray-600">{{ category.name }}</label>
                   </div>
                 </div>

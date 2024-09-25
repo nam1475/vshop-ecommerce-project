@@ -30,6 +30,18 @@ const modules = [
         name: 'Customers',
         route: 'admin.customer.list'
       },
+      {
+        name: 'Roles',
+        route: 'admin.role.list'
+      },
+      {
+        name: 'Permissions',
+        route: 'admin.permission.list'
+      },
+      {
+        name: 'Users',
+        route: 'admin.user.list'
+      },
     ],
     dropDown: true
   }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Services\Admin\AdminOrderService;
+use App\Http\Services\Admin\AdminOrderService;
 use App\Traits\HelperTrait;
 
 class AdminOrderController extends Controller
@@ -23,7 +23,8 @@ class AdminOrderController extends Controller
     public function list()
     {
         return Inertia::render('Admin/Order/List', [
-            'orders' => $this->adminOrderService->getOrders()
+            'orders' => $this->adminOrderService->getOrders(),
+            'statuses' => $this->adminOrderService->getOrderStatuses(),
         ]);
     }
 
@@ -43,9 +44,9 @@ class AdminOrderController extends Controller
         return redirect()->back()->with('error', 'Order updated failed');
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id = null)
     {
-        $result =  $this->adminOrderService->delete($id);
+        $result =  $this->adminOrderService->delete($request, $id);
         if($result){
             return redirect()->back()->with('success', 'Order deleted successfully');
         }

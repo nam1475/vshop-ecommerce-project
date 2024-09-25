@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Services\Admin\AdminBrandService;
+use App\Http\Services\Admin\AdminBrandService;
 
 class AdminBrandController extends Controller
 {
@@ -53,9 +53,9 @@ class AdminBrandController extends Controller
         return redirect()->back()->with('error', 'Failed to update brand.');
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id = null)
     {
-        $result = $this->brandService->delete($id);
+        $result = $this->brandService->delete($request, $id);
         if($result){
             return redirect()->route('admin.brand.list')->with('success', 'Brand deleted successfully.');
         }

@@ -24,4 +24,5 @@ Route::controller(LocationController::class)->group(function () {
     Route::get('/provinces', 'getProvinces');
     Route::get('/districts/{provinceCode}', 'getDistricts');
     Route::get('/wards/{districtCode}', 'getWards'); 
+    Route::get('/province-name/{provinceCode}', 'getProvinceName');
 });

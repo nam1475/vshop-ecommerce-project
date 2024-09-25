@@ -3,8 +3,8 @@ import Main from '@/Pages/Admin/Components/Layout/Main.vue';
 import {defineProps} from "vue";
 
 defineProps({
-    title: String,
-    action: Function
+  title: String,
+  action: Function
 });
 
 </script>

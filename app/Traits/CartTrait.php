@@ -1,13 +1,13 @@
 <?php
-namespace App\Helpers;
+namespace App\Traits;
 
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Support\Arr;
 
-class CartHelper{
+trait CartTrait{
 
-    public static function countCartItems()
+    public function countCartItems()
     {
         $customer = auth('customer')->user();
         if($customer){
@@ -16,7 +16,7 @@ class CartHelper{
         }
     }
 
-    public static function getCartItems()
+    public function getCartItems()
     {
         $customer = auth('customer')->user();
         if($customer){
@@ -30,14 +30,14 @@ class CartHelper{
         }
     }
 
-    public static function getProductsAndCartItems(){
+    public function getProductsAndCartItems(){
         // $cartItems = self::getCartItems();
         // $products = $cartItems->map(function ($item) {
         //     return Product::where('id', $item->product_id)->with('images')->first();
         // });
         // return [$products, $cartItems];
 
-        $cartItems = self::getCartItems();
+        $cartItems = $this->getCartItems();
         if(!empty($cartItems)){
             $ids = Arr::pluck($cartItems, 'product_id');
             $products = Product::whereIn('id', $ids)->with('images')->get();

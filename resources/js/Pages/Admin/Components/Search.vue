@@ -1,9 +1,33 @@
 <script setup>
+import { router } from "@inertiajs/vue3";
+import { defineProps, onMounted, ref, watch } from "vue";
+import { useRoute } from 'vue-router';
+
+const props = defineProps({
+  routeName: String
+});
+
+// const routes = useRoute();
+// const search = ref(routes.query.search || '');
+const params = new URLSearchParams(window.location.search);
+const search = ref(params.get('search') || '');
+
+function filter() {
+  router.get(route(`${props.routeName}.list`), {
+    ...(search.value != '' && { search: search.value }),
+  },
+  {
+    preserveState: true,
+    replace: true,
+    preserveScroll: true
+  }
+  );
+}
 </script>
 
 <template>
   <div class="w-full md:w-1/2">
-    <form class="flex items-center">
+    <form class="flex items-center" @submit.prevent="filter">
       <label for="simple-search" class="sr-only">Search</label>
       <div class="relative w-full">
         <div
@@ -28,7 +52,7 @@
           id="simple-search"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
           placeholder="Search"
-          required=""
+          v-model="search"
         />
       </div>
     </form>

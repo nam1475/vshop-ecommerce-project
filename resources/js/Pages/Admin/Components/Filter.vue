@@ -1,20 +1,22 @@
 <script setup>
 import { router, usePage } from "@inertiajs/vue3";
 import { defineProps, onMounted, ref, watch } from "vue";
+import { useRoute } from 'vue-router';
 
 const props = defineProps({
   filterOptions: Array,
   routeName: String
 });
 
-const checkedOptions = ref([]);
+// const routes = useRoute();
+
 // const currentRoute = usePage().url;
 
-const searchParams = new URLSearchParams(window.location.search);
-const queryFilter = ref(searchParams.getAll('filter[]'));
-// if(checkedOptions.value.length == 0) {
-//   checkedOptions.value = queryFilter.value;
-// }
+const params = new URLSearchParams(window.location.search);
+const queryFilter = ref(params.getAll('filter[]'));
+
+// const queryFilter = ref(routes.query.filter ? routes.query.filter : []);
+// console.log(routes.query.filter);
 
 watch(queryFilter, () => {
   filter();
@@ -32,6 +34,9 @@ function filter() {
   );
 }
 
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 </script>
 
@@ -73,27 +78,50 @@ function filter() {
   
   <div
     id="filterDropdown"
-    class="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
+    class="flex justify-between z-10 hidden p-5 bg-white rounded-lg shadow"
   >
-    <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-      Choose brand
-    </h6>
-    <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
-      <li class="flex items-center" v-for="option in filterOptions" :key="option.id">
-        <input
-          :id="option.id"
-          type="checkbox"
-          :value="option.name"
-          v-model="queryFilter"
-          class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-        />
-        <label
-          :for="option.id"
-          class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
-        >
-          {{ option.name }}(74)
-        </label>
-      </li>
-    </ul>
+    <div class="mx-2" v-for="option in filterOptions" :key="option.name">
+      <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
+        {{ option.name }}
+      </h6>
+      <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton" v-if="option.name == 'Status'">
+        <li class="flex items-center" v-for="item in option.values" :key="item.status">
+          <input
+            :id="item.status"
+            type="checkbox"
+            :value="item.status"
+            v-model="queryFilter"
+            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+          />
+          <label
+            :for="item.status"
+            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+          >
+            {{ capitalizeFirstLetter(item.status) }}
+            <span class="text-gray-400">({{ item.count }})</span> 
+          </label>
+        </li>
+      </ul>
+
+      <ul class="space-y-2 text-sm" aria-labelledby="filterDropdownButton" v-else>
+        <li class="flex items-center" v-for="item in option.values" :key="item.id">
+          <input
+            :id="item.id"
+            type="checkbox"
+            :value="item.name"
+            v-model="queryFilter"
+            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+          />
+          <label
+            :for="item.id"
+            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+          >
+            {{ item.name }} 
+            <span class="text-gray-400">({{ item.products_count }})</span> 
+          </label>
+        </li>
+      </ul>
+    </div>
+
   </div>
 </template>

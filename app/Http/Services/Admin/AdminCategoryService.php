@@ -1,19 +1,37 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Http\Services\Admin;
 
 use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Traits\HelperTrait;
-
+use App\Traits\Searchable;
+use App\Traits\Filterable;
 
 class AdminCategoryService
 {
-    use HelperTrait;
+    use HelperTrait, Searchable, Filterable;
 
     public function getCategoryById($id)
     {
         return Category::find($id);
+    }
+
+    public function getCategories()
+    {
+        $query = Category::query();
+        if($filters = request()->query('filter', [])) {
+            $this->scopeFilters($query, $filters, Category::class);
+        }
+        if($search = request()->query('search')) {
+            $this->scopeSearch($query, $search, Category::class);
+        }
+        return $query->with('childrenRecursive')->whereNull('parent_id');
+    }
+
+    public function getCategoriesByProducts($products)
+    {
+        return Category::whereIn('id', $products->pluck('category_id')->unique())->withCount('products')->get();
     }
 
     public function store($request)
@@ -57,9 +75,13 @@ class AdminCategoryService
         }
     }
 
-    public function delete($id)
+    public function delete($request, $id)
     {
         try{
+            if($request->has('ids')) {
+                $this->deleteRows($request, Category::class);
+                return true;
+            }
             $category = $this->getCategoryById($id);
             $result = $category->delete();
             return $result;

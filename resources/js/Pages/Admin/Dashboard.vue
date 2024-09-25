@@ -4,7 +4,7 @@ import Main from "@/Pages/Admin/Components/Layout/Main.vue";
 
 defineProps({
   title: String,
-  data: Array
+  data: Object
 });
 
 

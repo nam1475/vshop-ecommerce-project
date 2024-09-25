@@ -3,6 +3,7 @@ import { defineProps } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import { success, error, warning } from "@/alert";
 import SingleBrand from '@/Pages/Admin/Brand/Single.vue';
+import CheckboxChildren from "../Components/CheckboxChildren.vue";
 
 defineProps({
     brand: Object,
@@ -32,6 +33,9 @@ function deleteBrand(id){
 
 <template>
     <tr class="border-b dark:border-gray-700">    
+        <td class="w-4 p-4">
+            <CheckboxChildren :data="brand"/>
+        </td>
         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ brand.id }}</th>
         <td class="px-4 py-3">{{ brand.name }}</td>
         <td class="px-4 py-3">{{ brand.slug }}</td>

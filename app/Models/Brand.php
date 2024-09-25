@@ -11,6 +11,7 @@ class Brand extends Model
 {
     use HasFactory, HasSlug;
 
+    protected $table = 'brands';
     protected $fillable = ['name', 'slug'];
 
     public function getSlugOptions(): SlugOptions

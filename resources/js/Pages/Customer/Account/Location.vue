@@ -64,83 +64,67 @@
 
 import { computed, onMounted, ref, watch, defineProps, defineEmits, defineModel } from 'vue';
 import { useStore } from 'vuex';
-import { useVModel } from '@vueuse/core';
 
-const props = defineProps({
-  selectedProvince: String,
-  selectedDistrict: String,
-  selectedWard: String,
-  test: String
-});
-
-const emit = defineEmits(['update:selectedProvince', 'update:selectedDistrict', 'update:selectedWard']);
-
-// const selectedProvince = defineModel('selectedProvince');
-// const selectedDistrict = defineModel('selectedDistrict');
-// const selectedWard = defineModel('selectedWard');
-
-const localSelectedProvince = ref(props.selectedProvince);
-const localSelectedDistrict = ref(props.selectedDistrict);
-const localSelectedWard = ref(props.selectedWard);
-
-function emitProvince() {
-  emit('update:selectedProvince', localSelectedProvince.value.name);
-}
-
-function emitDistrict() {
-  emit('update:selectedDistrict', localSelectedDistrict.value.name);
-}
-
-function emitWard() {
-  emit('update:selectedWard', localSelectedWard.value.name);
-}
-
-// watch(() => props.selectedProvince, (newVal) => {
-//   localSelectedProvince.value = newVal;
+// const props = defineProps({
+//   selectedProvince: String,
+//   selectedDistrict: String,
+//   selectedWard: String,
 // });
+
+// const emit = defineEmits(['update:selectedProvince', 'update:selectedDistrict', 'update:selectedWard']);
+
+const selectedProvince = defineModel('selectedProvince');
+const selectedDistrict = defineModel('selectedDistrict');
+const selectedWard = defineModel('selectedWard');
+
+// const localSelectedProvince = ref(props.selectedProvince);
+// const localSelectedDistrict = ref(props.selectedDistrict);
+// const localSelectedWard = ref(props.selectedWard);
+
+// function emitProvince() {
+//   emit('update:selectedProvince', selectedProvince.value.name);
+// }
+
+// function emitDistrict() {
+//   emit('update:selectedDistrict', localSelectedDistrict.value.name);
+// }
+
+// function emitWard() {
+//   emit('update:selectedWard', localSelectedWard.value.name);
+// }
 
 const store = useStore();
 const provinces = computed(() => store.getters['location/provinces']);
 const districts = computed(() => store.getters['location/districts']);
 const wards = computed(() => store.getters['location/wards']);
 
-function findProvinceByName(name) {
-  return provinces.value.find((p) => p.name === name);
-}
-
-// const selectedProvince = computed(() => store.getters['location/selectedProvince']);
-// const selectedDistrict = computed(() => store.getters['location/selectedDistrict']);
-// const selectedWard = computed(() => store.getters['location/selectedWard']);
-// const selectedProvince = ref(null);
-// const selectedDistrict = ref(null);
-// const selectedWard = ref(null);
+// function findProvinceByName(name) {
+//   return provinces.value.find((p) => p.name == name);
+// }
 
 function fetchProvinces() {
   store.dispatch('location/fetchProvinces');
 }
 
-function fetchDistricts() {
-  store.dispatch('location/fetchDistricts', localSelectedProvince.value.code);
-  localSelectedDistrict.value = '';
-  localSelectedWard.value = '';
-  // store.dispatch('location/fetchDistricts', selectedProvince.value); 
-  // store.dispatch('location/setSelectedProvince', selectedProvince.value);
+function fetchDistricts(province) {
+  store.dispatch('location/fetchDistricts', province.code);
+  // localSelectedDistrict.value = '';
+  // localSelectedWard.value = '';
 }
 
-function fetchWards() {
-  store.dispatch('location/fetchWards', localSelectedDistrict.value.code);
-  localSelectedWard.value = '';
-  // store.dispatch('location/setSelectedDistrict', selectedDistrict.value);
+function fetchWards(district) {
+  store.dispatch('location/fetchWards', district.code);
+  // store.dispatch('location/fetchWards', localSelectedDistrict.value.code);
+  // localSelectedWard.value = '';
 }
 
-watch(localSelectedProvince, () => {
-  fetchDistricts();
+watch(selectedProvince, (newVal) => {
+  fetchDistricts(newVal);
 });
 
-watch(localSelectedDistrict, () => {
-  fetchWards();
+watch(selectedDistrict, (newVal) => {
+  fetchWards(newVal);
 });
-
 
 onMounted(() => {
   fetchProvinces();
@@ -150,56 +134,56 @@ onMounted(() => {
 
 
 <template>
-  <div class="container mx-auto p-6">
-    <h2 class="text-2xl font-bold mb-4">Chọn địa chỉ</h2>
-    
-    <div class="mb-4">
-      <label for="province" class="block font-medium">Tỉnh/Thành phố</label>
-      <!-- <select v-model="selectedProvince" @change="fetchDistricts" class="border p-2 w-full"> -->
-      <!-- <select v-model="selectedProvince" @change="fetchDistricts" class="border p-2 w-full"> -->
-      <select v-model="localSelectedProvince" @change="emitProvince" class="border p-2 w-full">
-        <option value="" disabled>Chọn tỉnh/thành phố</option>
-        <option 
-          v-for="province in provinces" 
-          :key="province.code" 
-          :value="province"
-        >
-          {{ province.name }}
-        </option>
-      </select>
-    </div>
+  <div class="col-span-1">
+    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      Province
+    </label>
+    <!-- <select v-model="selectedProvince" @change="fetchDistricts" class="p-2 w-full"> -->
+    <!-- <select v-model="localSelectedProvince" @change="emitProvince" class="p-2 w-full"> -->
+    <select v-model="selectedProvince" class="p-2 w-full">
+      <option value="" disabled>Select province</option>
+      <option 
+        v-for="province in provinces" 
+        :key="province.code" 
+        :value="province"
+      >
+        {{ province.name }}
+      </option>
+    </select>
+  </div>
 
-    <div class="mb-4">
-      <label for="district" class="block font-medium">Quận/Huyện</label>
-      <!-- <select v-model="selectedDistrict" @change="fetchWards" class="border p-2 w-full"> -->
-      <select v-model="localSelectedDistrict" @change="emitDistrict" class="border p-2 w-full">
-        <option value="" disabled>Chọn quận/huyện</option>
-        <option 
-          v-for="district in districts" 
-          :key="district.code" 
-          :value="district"
-        >
-          {{ district.name }}
-        </option>
-      </select>
-    </div>
+  <div class="col-span-1">
+    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      District
+    </label>
+    <select v-model="selectedDistrict" class="p-2 w-full">
+    <!-- <select v-model="localSelectedDistrict" @change="emitDistrict" class="p-2 w-full"> -->
+      <option value="" disabled>Select district</option>
+      <option 
+        v-for="district in districts" 
+        :key="district.code" 
+        :value="district"
+      >
+        {{ district.name }}
+      </option>
+    </select>
+  </div>
 
-    <div>
-      <label for="ward" class="block font-medium">Xã/Phường</label>
-      <select v-model="localSelectedWard" @change="emitWard" class="border p-2 w-full">
-        <option value="" disabled>Chọn xã/phường</option>
-        <option 
-          v-for="ward in wards" 
-          :key="ward.code" 
-          :value="ward"
-        >
-          {{ ward.name }}
-        </option>
-      </select>
-    </div>
-
-    <!-- <p class="mt-4">Địa chỉ đã chọn: {{ selectedProvinceName }}, {{ selectedDistrictName }}, {{ selectedWardName }}</p> -->
-    <!-- <p class="mt-4">Địa chỉ đã chọn: {{ selectedProvince }}, {{ selectedDistrict }}, {{ selectedWard }}</p> -->
+  <div class="col-span-1">
+    <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      Ward
+    </label>
+    <select v-model="selectedWard" class="p-2 w-full">
+    <!-- <select v-model="localSelectedWard" @change="emitWard" class="p-2 w-full"> -->
+      <option value="" disabled>Select ward</option>
+      <option 
+        v-for="ward in wards" 
+        :key="ward.code" 
+        :value="ward"
+      >
+        {{ ward.name }}
+      </option>
+    </select>
   </div>
 
   <!-- <div>

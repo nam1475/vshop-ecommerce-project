@@ -4,18 +4,23 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Traits\HelperTrait;
 use Inertia\Inertia;
+use App\Http\Services\Customer\CustomerProductService;
 
 class CustomerProductController extends Controller
 {
-    use HelperTrait;
+    protected $productService;
+
+    public function __construct(CustomerProductService $productService)
+    {
+        $this->productService = $productService;
+    }
     
     public function details($slug)
     {
         // dd($this->getProductBySlug($slug));
         return Inertia::render('Customer/Product/Details', [
-            'product' => $this->getProductBySlug($slug),
+            'product' => $this->productService->getProductBySlug($slug),
         ]);
     }
 }

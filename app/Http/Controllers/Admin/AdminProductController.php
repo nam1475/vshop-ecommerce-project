@@ -3,38 +3,51 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
-use App\Services\Admin\AdminProductService;
+use App\Http\Services\Admin\AdminProductService;
 use App\Traits\HelperTrait;
+use App\Http\Services\Customer\CustomerBrandService;
+use App\Models\Category;
+use App\Http\Services\Admin\AdminCategoryService;
 
 class AdminProductController extends Controller
 {   
     use HelperTrait;
 
     protected $productService;
+    protected $brandService;
+    protected $categoryService;
 
-    public function __construct(AdminProductService $productService)
+    public function __construct(AdminProductService $productService, CustomerBrandService $brandService, AdminCategoryService $categoryService)
     {
         $this->productService = $productService;
+        $this->brandService = $brandService;
+        $this->categoryService = $categoryService;
     }
 
     public function list()
     {
+        $products = $this->productService->getProducts()->paginate(3);
+        $allProducts = Product::all();
+        $brands = $this->brandService->getBrandsByProducts($allProducts);
+        $categories = $this->categoryService->getCategoriesByProducts($allProducts);
         return Inertia::render('Admin/Product/List', [
-            'products' => $this->productService->getProducts()->paginate(10),
-            'brands' => $this->productService->getBrands(), 
+            'products' => $products,
+            'brands' => $brands,
+            'categories' => $categories
         ]);
     }   
 
     public function add(){
         return Inertia::render('Admin/Product/Add', [
-            'categories' => $this->getCategories()->get(), 
-            'brands' => $this->productService->getBrands(),
+            'categories' => $this->categoryService->getCategories()->get(), 
+            'brands' => Brand::all(),
         ]);
     }
-
+    
     public function store(Request $request)
     {
         $result = $this->productService->store($request);
@@ -47,8 +60,8 @@ class AdminProductController extends Controller
     public function edit($id){
         return Inertia::render('Admin/Product/Edit', [
             'product' => $this->productService->getProductById($id),
-            'categories' => $this->getCategories()->get(),
-            'brands' => $this->productService->getBrands(),
+            'categories' => $this->categoryService->getCategories()->get(),
+            'brands' => Brand::all(),
         ]);
     }
 

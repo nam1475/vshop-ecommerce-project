@@ -10,6 +10,7 @@ class Order extends Model
 {
     use HasFactory, CreatedAndUpdatedBy;
     
+    protected $table = 'orders';
     protected $fillable = ['total_price', 'status', 'session_id', 'customer_address_id'];
 
     public function orderItems() {

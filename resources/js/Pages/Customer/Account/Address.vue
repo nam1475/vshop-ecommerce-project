@@ -13,7 +13,7 @@ const props = defineProps({
 
 const customer = usePage().props.auth.customer;
 
-// const store = useStore();
+const store = useStore();
 // const selectedProvince = computed(() => store.getters['location/selectedProvince']);
 // const selectedDistrict = computed(() => store.getters['location/selectedDistrict']);
 // const selectedWard = computed(() => store.getters['location/selectedWard']);
@@ -23,13 +23,20 @@ function findAddressById(addressId){
     return formEditAddress.value.find((address) => address.id == addressId);
 }
 
+// const provinceName = computed(() => store.getters['location/provinceName']);
+// function getProvinceName(code){
+//     store.dispatch('location/getProvinceName', code);
+//     const provinceName = computed(() => store.getters['location/provinceName']);
+//     return provinceName.value;
+// }
+
 const formAddAddress = useForm({
     name: customer.name || '',
     phone: customer.phone || '',
     address: '',
-    province: '',
-    district: '',
-    ward: '',
+    province: null,
+    district: null,
+    ward: null,
     is_main: 0,
     customer_id: customer.id
 });
@@ -62,7 +69,7 @@ function deleteAddress(addressId){
     warning()
     .then((result) => {
         if (result.isConfirmed) {
-            router.delete(route('customer.account.address.delete', addressId), {}, {
+            router.delete(route('customer.account.address.delete', addressId), {
                 onSuccess: (page) => {
                     success(page);
                 },
@@ -90,32 +97,36 @@ function deleteAddress(addressId){
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Name 
                             </label>
-                            <input v-model="formAddAddress.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name" required="">
+                            <input v-model="formAddAddress.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name">
                         </div>
                         
                         <div class="col-span-1">
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Phone 
                             </label>
-                            <input v-model="formAddAddress.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone" required="">
+                            <input v-model="formAddAddress.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone">
                         </div>
 
                         <div class="col-span-1">
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Address 
                             </label>
-                            <input v-model="formAddAddress.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address" required="">
+                            <input v-model="formAddAddress.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address">
                         </div>
 
-                        <!-- <Location v-model:selectedProvince="formAddAddress.province" v-model:selectedDistrict="formAddAddress.district" v-model:selectedWard="formAddAddress.ward"/> -->
                         <Location 
+                            v-model:selectedProvince="formAddAddress.province" 
+                            v-model:selectedDistrict="formAddAddress.district" 
+                            v-model:selectedWard="formAddAddress.ward"
+                        />
+                        <!-- <Location 
                             :selectedProvince="formAddAddress.province" 
                             :selectedDistrict="formAddAddress.district" 
                             :selectedWard="formAddAddress.ward"
                             @update:selectedProvince="formAddAddress.province = $event"
                             @update:selectedDistrict="formAddAddress.district = $event"
                             @update:selectedWard="formAddAddress.ward = $event"
-                        />
+                        /> -->
 
                         <div class="col-span-2">    
                             <input :id="`is-main-${formAddAddress.id}`" type="checkbox" :checked="formAddAddress.is_main" v-model="formAddAddress.is_main" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -148,6 +159,7 @@ function deleteAddress(addressId){
                         </span>
                     </h3>
                     <p class="text-gray-700">{{ ca.phone }}</p>
+                    <!-- <p class="text-gray-700">{{ ca.address }}, {{ ca.ward }}, {{ ca.district }}, {{ getProvinceName(ca.province) }} </p> -->
                     <p class="text-gray-700">{{ ca.address }}, {{ ca.ward }}, {{ ca.district }}, {{ ca.province }} </p>
                 </div>
 
@@ -159,21 +171,21 @@ function deleteAddress(addressId){
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Name 
                                     </label>
-                                    <input v-model="ca.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name" required="">
+                                    <input v-model="ca.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name">
                                 </div>
                                 
                                 <div class="col-span-1">
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Phone 
                                     </label>
-                                    <input v-model="ca.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone" required="">
+                                    <input v-model="ca.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone">
                                 </div>
 
                                 <div class="col-span-1">
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Address
                                     </label>
-                                    <input v-model="ca.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address" required="">
+                                    <input v-model="ca.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address">
                                 </div>
 
                                 <Location 

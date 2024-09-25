@@ -10,6 +10,8 @@ export default {
     selectedProvince: null,
     selectedDistrict: null,
     selectedWard: null,
+
+    provinceName: '',
   },
 
   getters: {
@@ -32,7 +34,7 @@ export default {
     SET_WARDS(state, wards) {
       state.wards = wards;
     },
-
+    
     SET_SELECTED_PROVINCE(state, province) {
       state.selectedProvince = province;
     },
@@ -41,6 +43,10 @@ export default {
     },
     SET_SELECTED_WARD(state, ward) {
       state.selectedWard = ward;
+    },
+
+    SET_PROVINCE_NAME(state, name) {
+      state.provinceName = name;
     },
   },
 
@@ -66,6 +72,15 @@ export default {
         const response = await axios.get(`/api/wards/${districtCode}`);
         commit('SET_WARDS', response.data);
       } catch (error) {
+        console.error(error);
+      }
+    },
+    async getProvinceName({ commit }, code){
+      try{
+        const response = await axios.get(`/api/province-name/${code}`);
+        // this.country_name = res.data.success;
+        commit('SET_PROVINCE_NAME', response.data);
+      } catch(error){
         console.error(error);
       }
     },

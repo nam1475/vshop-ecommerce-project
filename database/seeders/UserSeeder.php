@@ -17,6 +17,14 @@ class UserSeeder extends Seeder
         User::truncate();
 
         // Tạo dữ liệu mới
-        User::factory(5)->create();
+        $user = User::factory(5)->create();
+
+        $user[0]->assignRole('admin');
+        $user[1]->assignRole('writer', 'admin');
+        $user[2]->assignRole('user');
+        $user[3]->assignRole('admin');
+        $user[4]->assignRole('writer');
+
+
     }
 }

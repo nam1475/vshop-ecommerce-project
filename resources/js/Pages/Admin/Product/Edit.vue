@@ -13,7 +13,7 @@ const props = defineProps({
   brands: Array,
 });
 
-var form = useForm({
+const form = useForm({
   id: props.product.id,
   name: props.product.name,
   slug: props.product.slug,
@@ -26,9 +26,6 @@ var form = useForm({
   price: props.product.price,
   product_images: props.product.images,
 });
-
-// console.log(props.product.images);  
-
 
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);

@@ -2,18 +2,17 @@
 
 namespace App\Http\Middleware;
 
-use App\Helpers\CartHelper;
 use App\Http\Resources\CartResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Route;
-use App\Traits\HelperTrait;
-use App\Models\CustomerAddress;
-use App\Http\Resources\CustomerAddressResource;
+use App\Http\Services\Admin\AdminCategoryService;
+use App\Traits\CartTrait;
 
 class HandleInertiaRequests extends Middleware
 {
-    use HelperTrait;
+
+    use CartTrait;
 
     /**
      * The root template that is loaded on the first page visit.
@@ -21,6 +20,12 @@ class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+    protected $categoryService;
+
+    public function __construct(AdminCategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
 
     /**
      * Determine the current asset version.
@@ -51,11 +56,11 @@ class HandleInertiaRequests extends Middleware
                 'info' => fn () => $request->session()->get('info'),
             ],
 
-            'cart' => new CartResource(CartHelper::getProductsAndCartItems()),
+            'cart' => new CartResource($this->getProductsAndCartItems()),
 
             // 'customerAddress' => new CustomerAddressResource(CustomerAddress::where('customer_id', $request->user('customer')->id)->first()),
             
-            'categories' => $this->getCategories()->get(),
+            'categories' => $this->categoryService->getCategories()->get(),
 
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

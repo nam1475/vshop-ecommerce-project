@@ -3,29 +3,23 @@ import { defineProps, defineEmits, ref, watch, computed } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import { success, error, warning } from '@/alert.js';
 import { useStore } from 'vuex';
+import CheckboxChildren from "../Components/CheckboxChildren.vue";
 
 const props = defineProps({
   product: Object,
   // checkedAllRows: Array
 });
 
-// const emit = defineEmits(['setCheckedAllRows']);
-
-const store = useStore();
+// const store = useStore();
 // const checkedRows = ref([]);
 // const checkedRows = computed(() => props.checkedAllRows);
-const checkedRows = computed(() => store.getters['checkbox/checkedRows'].includes(props.product.id));
+// const checkedRows = computed(() => store.getters['checkbox/checkedRows'].includes(props.product.id));
 // const checkedRows = computed({
 //   get: () => store.getters['checkbox/checkedRows'], 
 //   set: (newVal) => {
 //     console.log(newVal);
 //     store.dispatch('checkbox/setCheckedRow', newVal)
 //   },
-// });
-
-// watch(checkedRows, () => {
-//   console.log(checkedRows.value);
-//   store.dispatch('checkbox/setCheckedRow', checkedRows.value);
 // });
 
 // watch(() => props.checkedAllRows, (newVal) => {
@@ -38,10 +32,10 @@ const checkedRows = computed(() => store.getters['checkbox/checkedRows'].include
 //   emit('setCheckedRow', checkedRows.value);
 // }
 
-function setCheckedRow(id) {
-  // store.dispatch('checkbox/setCheckedRow', checkedRows.value);
-  store.dispatch('checkbox/setCheckedRow', id);
-}
+// function setCheckedRow(id) {
+//   // store.dispatch('checkbox/setCheckedRow', checkedRows.value);
+//   store.dispatch('checkbox/setCheckedRow', id);
+// }
 
 function deleteProduct(id){
   warning()
@@ -68,13 +62,10 @@ function deleteProduct(id){
 <template>
   <tr class="border-b dark:border-gray-700">
     <td class="w-4 p-4">
-      <div class="flex items-center">
-          <!-- <input :id="`checkbox-${product.id}`" @change="emitCheckedRows" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"> -->
-          <!-- <input :id="`checkbox-${product.id}`" @change="setCheckedRow" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"> -->
-          <input :id="`checkbox-${product.id}`" @change="setCheckedRow(product.id)" :checked="checkedRows" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-          <!-- <input :id="`checkbox-${product.id}`" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"> -->
-          <label :for="`checkbox-${product.id}`" class="sr-only">checkbox</label>
-      </div>
+      <!-- <input :id="`checkbox-${product.id}`" @change="setCheckedRow" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"> -->
+      <!-- <input :id="`checkbox-${product.id}`" @change="setCheckedRow(product.id)" :checked="checkedRows" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"> -->
+      <!-- <input :id="`checkbox-${product.id}`" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"> -->
+      <CheckboxChildren :data="product"/>
     </td>
     <th
       scope="row"

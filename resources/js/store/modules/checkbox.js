@@ -20,8 +20,6 @@ export default {
       // console.log(state.checkedRows);
       
       const index = state.checkedRows.indexOf(item);
-      console.log(index);
-      console.log(item);
       
       if (index > -1) {
         state.checkedRows.splice(index, 1);
@@ -31,37 +29,18 @@ export default {
       }
       console.log(state.checkedRows);
       
-      // item.forEach(value => {
-      //   const index = state.checkedRows.indexOf(value);
-      //   if (index > -1) {
-      //     state.checkedRows.splice(index, 1);
-      //   } 
-      //   else {
-      //     state.checkedRows.push(value);
-      //   }
-      // });
-      
     },
 
     SET_CHECKED_ALL_ROWS(state, items) {
-      // state.checkedRows = items;
-      // console.log(state.checkedRows);
-      
-      state.checkedRows = items.map(item => item.id);
-      console.log(state.checkedRows);
-      
-
-      // items.forEach(item => {
-      //   if(!state.checkedRows.includes(item)) {
-      //     state.checkedRows.push(item);
-      //   }
-      //   else{
-      //     const index = state.checkedRows.indexOf(item);
-      //     state.checkedRows.splice(index, 1);
-      //   }
-      //   console.log(state.checkedRows);
-        
-      // });
+      const isArrayOfObjects = items.every(item => typeof item === 'object' && item != null);
+      if(isArrayOfObjects) {
+        state.checkedRows = items.map(item => item.id);
+        console.log(state.checkedRows);
+      }
+      else{
+        state.checkedRows = items;
+        console.log(state.checkedRows);
+      }
     },
   },
 

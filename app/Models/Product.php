@@ -13,6 +13,7 @@ class Product extends Model
 {
     use HasFactory, HasSlug;
 
+    protected $table = 'products';
     protected $fillable = [
         'name',
         'slug',

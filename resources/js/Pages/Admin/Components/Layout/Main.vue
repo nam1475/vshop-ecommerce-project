@@ -3,10 +3,15 @@ import { onMounted } from 'vue'
 import { initFlowbite } from 'flowbite'
 import Navbar from '@/Pages/Admin/Components/Layout/Navbar.vue'
 import Sidebar from '@/Pages/Admin/Components/Layout/Sidebar.vue'
+import {success, error} from "@/alert.js";
+import { usePage } from '@inertiajs/vue3';
 
+const page = usePage();
 // initialize components based on data attribute selectors
 onMounted(() => {
     initFlowbite();
+    success(page);
+    error(page);
 });
 
 

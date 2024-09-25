@@ -2,6 +2,7 @@
 import { defineProps } from 'vue';
 import Table from "@/Pages/Admin/Components/Table.vue";
 import SingleCustomer from "@/Pages/Admin/Customer/Single.vue";
+import CheckboxAll from "@/Pages/Admin/Components/CheckboxAll.vue";
 
 defineProps({
     customers: Object
@@ -13,6 +14,9 @@ defineProps({
 <Table :links="customers.links" :canAdd="false">
     <template #tableHeader>
       <tr>
+        <th scope="col" class="p-4">
+          <CheckboxAll :data="customers.data" />  
+        </th>
         <th scope="col" class="px-4 py-3">ID</th>
         <th scope="col" class="px-4 py-3">Name</th>
         <th scope="col" class="px-4 py-3">Email</th>

@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\CartItem;
-use App\Services\Customer\CustomerCartService;
+use App\Http\Services\Customer\CustomerAddressService;
+use App\Http\Services\Customer\CustomerCartService;
 use App\Traits\HelperTrait;
 
 class CustomerCartController extends Controller
@@ -15,16 +16,18 @@ class CustomerCartController extends Controller
     use HelperTrait;
 
     protected $cartService;
+    protected $addressService;
 
-    public function __construct(CustomerCartService $cartService)
+    public function __construct(CustomerCartService $cartService, CustomerAddressService $customerAddressService)
     {
         $this->cartService = $cartService;
+        $this->addressService = $customerAddressService;
     }
 
     public function list()
     {
         return Inertia::render('Customer/Cart/List', [
-            'customerMainAddress' => $this->getCustomerMainAddress(),
+            'customerMainAddress' => $this->addressService->getCustomerMainAddress(),
         ]);
     }
 

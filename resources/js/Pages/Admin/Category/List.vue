@@ -2,53 +2,50 @@
 import SingleCategory from '@/Pages/Admin/Category/Single.vue';
 import Table from '@/Pages/Admin/Components/Table.vue';
 import { defineProps, ref } from 'vue';
-import { useStore } from 'vuex';
+import CheckboxAll from '@/Pages/Admin/Components/CheckboxAll.vue';
 
 const props = defineProps({
-    categories: Object,
+  categories: Object,
 });
 
-const store = useStore();
-const isCheckedAll = ref(false); 
-
-function toggleCheckAll() {
-  isCheckedAll.value = !isCheckedAll.value;
-  if (isCheckedAll.value) {
-    setCheckedAllRows(props.categories.data);
+function getAllCategories(categories) {
+  if (!categories) {
+    return [];
   }
-  else{
-    setCheckedAllRows([]);
-  } 
+
+  const ids = [...categories];  
+  // const ids = categories.map(category => category);  
+  // const ids = [categories.id];
+
+  categories.forEach(category => {
+    ids.push(...getAllCategories(category.children_recursive));
+  });
+
+  return ids;
 }
 
-function setCheckedAllRows(values) {
-  store.dispatch('checkbox/setCheckedAllRows', values);
-}
 
 </script>
 
 <template>
-<Table routeName="admin.category" :links="categories.links" :filterOptions="categories.data">
+<Table routeName="admin.category" :links="categories.links">
     <template #tableHeader>
-        <tr>
-            <th scope="col" class="p-4">
-                <div class="flex items-center">
-                    <input id="checkbox-all" v-model="isCheckedAll" @click="toggleCheckAll" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="checkbox-all" class="sr-only">checkbox</label>
-                </div>  
-            </th>
-            <th scope="col" class="px-4 py-3">ID</th>
-            <th scope="col" class="px-4 py-3">Name</th>
-            <th scope="col" class="px-4 py-3">Slug</th>
-            <th scope="col" class="px-4 py-3">Parent</th>
-            <th scope="col" class="px-4 py-3">
-                <span class="sr-only">Actions</span>
-            </th>
-        </tr>
+      <tr>
+        <th scope="col" class="p-4">
+          <CheckboxAll :getAllCategories="getAllCategories" :data="categories.data"/>
+        </th>
+        <th scope="col" class="px-4 py-3">ID</th>
+        <th scope="col" class="px-4 py-3">Name</th>
+        <th scope="col" class="px-4 py-3">Slug</th>
+        <th scope="col" class="px-4 py-3">Parent</th>
+        <th scope="col" class="px-4 py-3">
+            <span class="sr-only">Actions</span>
+        </th>
+      </tr>
     </template>
     
     <template #tableBody>
-        <SingleCategory v-for="category in categories.data" :key="category.id" :category="category" />
+      <SingleCategory v-for="category in categories.data" :key="category.id" :category="category" />
     </template>
 
 
