@@ -14,7 +14,7 @@ function deleteBrand(id){
     .then((result) => {
         if (result.isConfirmed) {
             try{
-                router.delete(route("admin.brand.delete", id), {
+                router.delete(route("admin.brand.destroy", id), {
                     onSuccess: (page) => {
                         success(page);
                     },
@@ -34,7 +34,7 @@ function deleteBrand(id){
 <template>
     <tr class="border-b dark:border-gray-700">    
         <td class="w-4 p-4">
-            <CheckboxChildren :data="brand"/>
+            <CheckboxChildren :data="brand.id"/>
         </td>
         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ brand.id }}</th>
         <td class="px-4 py-3">{{ brand.name }}</td>

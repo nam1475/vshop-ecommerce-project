@@ -19,7 +19,8 @@ trait HelperTrait
 
     public function getOrder($orderId)
     {
-        $order = Order::with(['orderItems.product.images', 'customerAddress.customer'])->where('id', $orderId)->first();
+        // $order = Order::with(['orderItems.product.images', 'customerAddress.customer'])->where('id', $orderId)->first();
+        $order = Order::with(['orderItems.product', 'customerAddress.customer'])->where('id', $orderId)->first();
         return new OrderResource($order);
     }
 
@@ -27,7 +28,7 @@ trait HelperTrait
     {
         $uniqueName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
         $publicPath = public_path($path);
-        $image->move($publicPath, $uniqueName);
+        $image->move($publicPath, $uniqueName); 
         return $uniqueName;
     }
 
@@ -38,4 +39,6 @@ trait HelperTrait
         }
     }
 }
+
+
 

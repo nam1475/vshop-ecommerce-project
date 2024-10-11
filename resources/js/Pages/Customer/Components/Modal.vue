@@ -7,9 +7,6 @@ const props = defineProps({
     buttonText: String
 });
 
-
-
-
 </script>
 
 <template>

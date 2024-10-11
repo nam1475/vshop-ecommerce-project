@@ -15,11 +15,9 @@ class CustomerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if(auth()->check() && auth()->user()->is_admin == 0){
-        if(auth('customer')->check()){
+        if(auth('customer')->check()) {
             return $next($request);
         }
-        // return redirect()->route('login')->with('error', 'You are not authorized to access this page.');
         return redirect()->route('login');
     }
 }

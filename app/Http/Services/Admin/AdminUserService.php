@@ -47,7 +47,6 @@ class AdminUserService
             $user = $this->getUserById($id);
             $user->update([
                 'name' => $request->name,
-                'email' => $request->email,
             ]);
 
             if($request->has('roles')) {
@@ -62,7 +61,7 @@ class AdminUserService
         }
     }
 
-    public function delete($request, $id)
+    public function destroy($request, $id)
     {
         try{
             if($request->has('ids')) {

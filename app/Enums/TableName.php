@@ -9,5 +9,7 @@ enum TableName: string {
     case Customer = 'customer';
     case Role = 'role';
     case Permission = 'permission';
+    case User = 'user';
+    case Dashboard = 'dashboard';
 }
 

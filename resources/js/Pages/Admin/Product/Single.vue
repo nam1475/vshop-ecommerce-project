@@ -42,7 +42,7 @@ function deleteProduct(id){
     .then((result) => {
       if (result.isConfirmed) {
         try{
-          router.delete(route("admin.product.delete", id), {
+          router.delete(route("admin.product.destroy", id), {
             onSuccess: (page) => {
               success(page);
             },
@@ -65,7 +65,7 @@ function deleteProduct(id){
       <!-- <input :id="`checkbox-${product.id}`" @change="setCheckedRow" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"> -->
       <!-- <input :id="`checkbox-${product.id}`" @change="setCheckedRow(product.id)" :checked="checkedRows" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"> -->
       <!-- <input :id="`checkbox-${product.id}`" v-model="checkedRows" :value="product.id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"> -->
-      <CheckboxChildren :data="product"/>
+      <CheckboxChildren :data="product.id"/>
     </td>
     <th
       scope="row"

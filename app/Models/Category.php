@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Expr\Cast\Object_;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Category extends Model
+class Category extends Model implements HasMedia
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, InteractsWithMedia;
 
     protected $table = 'categories';
-    protected $fillable = ['name', 'parent_id', 'slug', 'url'];
+    protected $fillable = ['name', 'parent_id', 'slug'];
 
     // public function getSlugParents($categoryParent)
     // {
@@ -52,27 +54,16 @@ class Category extends Model
     public function childrenRecursive()
     {
         // return $this->children()->with('childrenRecursive');
-        return $this->children()->with(['childrenRecursive', 'parent']);
+        return $this->children()->with(['childrenRecursive', 'parent', 'media']);
         // return $this->children()->with(['childrenRecursive', 'products']);
     }
 
+    /* Lấy id tất cả các danh mục con của danh mục cha hiện tại */
     public function getAllChildrenIds()
     {
         $ids = $this->childrenRecursive()->pluck('id');
         // return $ids->merge([$this->getAllChildrenIds()]); // Bao gồm cả chính category hiện tại
         return $ids; 
-
-        // $ids = collect($this->childrenRecursive()->pluck('id'));
-
-        // if(is_object($this)){
-        //     return $ids;
-        // }
-
-        // foreach ($this->childrenRecursive()->get() as $childCategory) {
-        //     $ids = $ids->merge($childCategory->getAllChildrenIds());
-        // }   
-
-        // return $ids;
     }
     
     public function parent()

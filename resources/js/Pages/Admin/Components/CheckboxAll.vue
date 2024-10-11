@@ -3,8 +3,8 @@ import { defineProps, defineEmits, ref} from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
-    getAllCategories: Function,
-    data: Array,
+  getAllCategories: Function,
+  data: Array,
 });
 
 const store = useStore();
@@ -34,7 +34,6 @@ function setCheckedAllRows(values) {
 
 <template>
     <div class="flex items-center">
-        <input id="checkbox-all" :checked="isCheckedAll" @change="toggleCheckAll" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-        <label for="checkbox-all" class="sr-only">checkbox</label>
+      <input id="checkbox-all" :checked="isCheckedAll" @change="toggleCheckAll" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
     </div>
 </template>

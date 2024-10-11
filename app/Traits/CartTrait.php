@@ -4,8 +4,10 @@ namespace App\Traits;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Support\Arr;
+use App\Traits\Images;
 
 trait CartTrait{
+    use Images;
 
     public function countCartItems()
     {
@@ -40,7 +42,7 @@ trait CartTrait{
         $cartItems = $this->getCartItems();
         if(!empty($cartItems)){
             $ids = Arr::pluck($cartItems, 'product_id');
-            $products = Product::whereIn('id', $ids)->with('images')->get();
+            $products = Product::whereIn('id', $ids)->get(); 
             $cartItems = Arr::keyBy($cartItems, 'product_id');
             return [$products, $cartItems];
         }

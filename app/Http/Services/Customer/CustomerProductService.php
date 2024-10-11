@@ -9,7 +9,7 @@ class CustomerProductService
 {
     public function getProductBySlug($slug)
     {
-        return Product::with(['images', 'category'])->where('slug', $slug)->first();
+        return Product::with('category')->where('slug', $slug)->first();
     }
     
     public function getProductIdsByCategory($category)

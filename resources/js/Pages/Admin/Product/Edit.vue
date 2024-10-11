@@ -1,16 +1,17 @@
 <script setup>
 import { defineProps, ref } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
-import { Plus } from "@element-plus/icons-vue";
 import Main from "@/Pages/Admin/Components/Layout/Main.vue";
 import { success, error, warning } from "@/alert.js";
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
+import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 
 const props = defineProps({
   product: Object,
   categories: Array,
   brands: Array,
+  images: Array,
 });
 
 const form = useForm({
@@ -24,7 +25,7 @@ const form = useForm({
   published: props.product.published,
   description: props.product.description,
   price: props.product.price,
-  product_images: props.product.images,
+  product_images: props.images,
 });
 
 const dialogImageUrl = ref("");
@@ -38,8 +39,8 @@ function handlePictureCardPreview(file) {
 
 function handleRemove(file) {
   if (file.id) {
-    form.delete(route("admin.product.delete.image", file.id), {
-      onSuccess: (page) => {
+    form.delete(route("admin.product.delete.image", { productId: form.id, imageId: file.id }), {
+      onSuccess: (page) => {  
         success(page);
       },
       onError: (page) => {
@@ -100,7 +101,6 @@ function updateProduct() {
         type="text"
         id="name"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        required=""
         v-model="form.name"
       />
     </div>
@@ -157,7 +157,6 @@ function updateProduct() {
         type="number"
         id="price"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        required=""
         v-model="form.price"
       />
     </div>
@@ -172,7 +171,6 @@ function updateProduct() {
           name="published"
           id="published"
           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          required=""
           value="1"
           v-model="form.published"
         />
@@ -188,7 +186,6 @@ function updateProduct() {
           name="published"
           id="no-published"
           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          required=""
           value="0"
           v-model="form.published"
         />
@@ -211,7 +208,6 @@ function updateProduct() {
           name="in_stock"
           id="in-stock"
           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          required=""
           value="1"
           v-model="form.in_stock"
         />
@@ -227,7 +223,6 @@ function updateProduct() {
           name="in_stock"
           id="out-stock"
           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          required=""
           value="0"
           v-model="form.in_stock"
         />
@@ -275,8 +270,8 @@ function updateProduct() {
         list-type="picture-card"
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
-        :auto-upload="false"
         :on-change="handleFileUpload"
+        :auto-upload="false"
         :file-list="form.product_images"
         multiple
       >
@@ -285,8 +280,17 @@ function updateProduct() {
 
       <el-dialog v-model="dialogVisible">
         <img w-full :src="dialogImageUrl" alt="Preview Image" />
-      </el-dialog>
-      <!-- <img v-for="(item, index) in form.product_images" :key="index" :src="item.image" alt="" class="w-20 h-30">   -->
+      </el-dialog>  
+
+      <!-- <img v-for="(item, index) in form.product_images" :key="index" :src="item" alt="" class="w-20 h-30">   -->
+
+      <!-- <div v-if="form.product_images.length" class="flex flex-wrap gap-4 mt-4">
+        <div v-for="image in form.product_images" :key="image.id" class="image-item">
+          <img :src="image.url" alt="Product Image" class="w-[150px] h-[150px] rounded-lg" />
+          <el-button type="danger" class="mt-2" @click="deleteImage(image.id)">Delete</el-button>
+        </div>
+      </div> -->
+
     </div>
   </div>
 </FormAction>

@@ -3,13 +3,24 @@
 namespace App\Http\Services\Admin;
 
 use App\Models\Customer;
+use App\Models\CustomerAddress;
 use App\Traits\HelperTrait;
 
 class AdminCustomerService
 {
     use HelperTrait;
 
-    public function delete($request, $id)
+    public function getCustomerById($id)
+    {
+        return Customer::find($id);
+    }
+
+    public function getCustomerAddresses($customerId)
+    {
+        return CustomerAddress::where('customer_id', $customerId)->get();
+    }
+
+    public function destroy($request, $id)
     {
         try{
             if($request->has('ids')) {

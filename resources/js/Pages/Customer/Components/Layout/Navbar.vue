@@ -182,16 +182,16 @@ const open = ref(false);
                       <div class="relative bg-white">
                         <div class="mx-auto max-w-7xl px-8">
                           <div class="text-center text-3xl font-bold tracking-tight text-gray-900 pt-4">
-                            <Link :href="route('customer.category.list', category.slug)" class="hover:underline">{{ category.name }}</Link>
+                            <Link :href="route('customer.category.index', category.slug)" class="hover:underline">{{ category.name }}</Link>
                           </div>
 
                           <div class="grid grid-cols-2 gap-x-8 gap-y-10 py-10">
                             <div class="col-start-2 grid grid-cols-2 gap-x-8">
                               <div v-for="item in category.children_recursive.slice(0, 2)" :key="item.id" class="group relative text-base sm:text-sm">
                                 <div class="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                  <img :src="item.url" class="object-cover object-center" />
+                                  <img :src="item.images[0]" class="object-cover object-center" />
                                 </div>
-                                <a :href="route('customer.category.list', item.slug)" class="mt-6 block font-medium text-gray-900">
+                                <a :href="route('customer.category.index', item.slug)" class="mt-6 block font-medium text-gray-900">
                                   <span class="absolute inset-0 z-10" aria-hidden="true" />
                                   {{ item.name }}
                                 </a>
@@ -201,13 +201,13 @@ const open = ref(false);
 
                             <div class="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
                               <div v-for="child in category.children_recursive" :key="child.id">
-                                <Link :href="route('customer.category.list', child.slug)" :id="`${child.name}-heading`" class="hover:underline font-medium text-base font-black text-gray-900">
+                                <Link :href="route('customer.category.index', child.slug)" :id="`${child.name}-heading`" class="hover:underline font-medium text-base font-black text-gray-900">
                                   {{ child.name }}
                                 </Link>
                                 
                                 <ul role="list" :aria-labelledby="`${child.name}-heading`" class="mt-6 space-y-6 sm:mt-4 sm:space-y-4">
                                   <li v-for="item in child.children_recursive" :key="item.name" class="flex">
-                                    <Link :href="route('customer.category.list', item.slug)" class="hover:underline">{{ item.name }}</Link>
+                                    <Link :href="route('customer.category.index', item.slug)" class="hover:underline">{{ item.name }}</Link>
                                   </li>
                                 </ul>
                               </div>
@@ -222,10 +222,10 @@ const open = ref(false);
                 <!-- <a v-for="page in navigation.pages" :key="page.name" :href="page.href" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">{{ page.name }}</a> -->
               </div>
             </PopoverGroup>
-
+            
             <!-- Cart and Account -->
-            <div class="ml-auto flex items-center" v-if="auth.customer">
-              <Link :href="route('customer.cart.list')" id="myCartDropdownButton1" type="button" class="relative inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
+            <div class="ml-auto flex items-center" v-if="auth.customer && auth.customer.email_verified_at">
+              <Link :href="route('customer.cart.index')" id="myCartDropdownButton1" type="button" class="relative inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
                 <span class="sr-only">
                   Cart
                 </span>
@@ -251,11 +251,6 @@ const open = ref(false);
               <div id="userDropdown1" class="hidden z-10 w-56 divide-y divide-gray-100 overflow-hidden overflow-y-auto rounded-lg bg-white antialiased shadow dark:divide-gray-600 dark:bg-gray-700">
                 <ul class="p-2 text-start text-sm font-medium text-gray-900 dark:text-white">
                   <li><Link :href="route('customer.account.info')" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> My Account </Link></li>
-                  <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> My Orders </a></li>
-                  <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Settings </a></li>
-                  <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Favourites </a></li>
-                  <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Delivery Addresses </a></li>
-                  <li><a href="#" title="" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Billing Data </a></li>
                 </ul>
             
                 <div class="p-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -267,8 +262,26 @@ const open = ref(false);
             </div>
 
             <div class="ml-auto flex items-center" v-else>
-              <Link :href="route('login')" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</Link>
-              <Link :href="route('register')" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Register</Link>
+              <button id="userDropdownButton2" data-dropdown-toggle="userDropdown2" type="button" class="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
+                <svg class="w-5 h-5 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                </svg>              
+                <svg class="w-4 h-4 text-gray-900 dark:text-white ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                </svg> 
+              </button>
+
+              <div id="userDropdown2" class="hidden z-10 w-56 divide-y divide-gray-100 overflow-hidden overflow-y-auto rounded-lg bg-white antialiased shadow dark:divide-gray-600 dark:bg-gray-700">
+                <ul class="p-2 text-start text-sm font-medium text-gray-900 dark:text-white">
+                  <li><Link :href="route('login')" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> Login </Link></li>
+                </ul>
+            
+                <div class="p-2 text-sm font-medium text-gray-900 dark:text-white">
+                  <Link :href="route('register')" class="inline-flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"> 
+                    Register 
+                  </Link>
+                </div>
+              </div>
             </div>
 
           </div>

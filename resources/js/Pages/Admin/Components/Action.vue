@@ -16,7 +16,7 @@ function deleteChecked(){
     .then((result) => {
       if (result.isConfirmed) {
         try{
-          router.delete(route(`${props.routeName}.delete`, {ids: checkedRows.value}), 
+          router.delete(route(`${props.routeName}.destroy`, {ids: checkedRows.value}), 
           {
             onSuccess: (page) => {
               success(page);
@@ -68,13 +68,6 @@ function deleteChecked(){
       class="py-1 text-sm text-gray-700 dark:text-gray-200"
       aria-labelledby="actionsDropdownButton"
     >
-      <li>
-        <a
-          href="#"
-          class="block py-2 px-4 text-center hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          >Mass Edit</a
-        >
-      </li>
     </ul>
     <div class="py-1">
       <button

@@ -19,7 +19,7 @@ function deleteCategory(id){
     .then((result) => {
         if (result.isConfirmed) {
             try{
-                router.delete(route("admin.category.delete", id), {
+                router.delete(route("admin.category.destroy", id), {
                     onSuccess: (page) => {
                         success(page);
                     },
@@ -39,7 +39,7 @@ function deleteCategory(id){
 <template>
     <tr class="border-b dark:border-gray-700">    
         <td class="w-4 p-4">
-            <CheckboxChildren :data="category"/>
+            <CheckboxChildren :data="category.id"/>
         </td>
         <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ category.id }}</th>
         <td class="px-4 py-3">{{ char + category.name }}</td>

@@ -13,7 +13,7 @@ function deleteOrder(id){
     .then((result) => {
       if (result.isConfirmed) {
         try{
-          router.delete(route("admin.order.delete", id), {
+          router.delete(route("admin.order.destroy", id), {
             onSuccess: (page) => {
               success(page);
             },
@@ -35,7 +35,7 @@ function deleteOrder(id){
       class="border-b dark:border-gray-700"
     >
       <td class="w-4 p-4">
-          <CheckboxChildren :data="order"/>
+          <CheckboxChildren :data="order.id"/>
       </td>
       <th
         scope="row"

@@ -23,7 +23,7 @@ watch(queryFilter, () => {
 });
 
 function filter() {
-  router.get(route(`${props.routeName}.list`), {
+  router.get(route(`${props.routeName}.index`), {
     filter: queryFilter.value
   },
   {

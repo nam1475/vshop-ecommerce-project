@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\DB;
 use App\Traits\HelperTrait;
 use App\Traits\Filterable;
 use App\Traits\Searchable;
+use App\Traits\UploadAble;
 
 class AdminProductService
 {
-    use HelperTrait, Filterable, Searchable;
+    use HelperTrait, Filterable, Searchable, UploadAble;
 
     public function getProducts()
     {
@@ -22,7 +23,8 @@ class AdminProductService
         if($search = request()->query('search')) {
             $this->scopeSearch($query, $search, Product::class);
         }
-        return $query->with('category', 'brand', 'images');
+        // return $query->with('category', 'brand', 'images');
+        return $query->with('category', 'brand');
     }
     
     public function getProductById($id)
@@ -37,13 +39,8 @@ class AdminProductService
             $product = Product::create($request->all());
             if($request->hasFile('product_images')) {
                 $productImages = $request->file('product_images');
-                foreach ($productImages as $image) {
-                    $uniqueName = $this->uniqueImageName($image, 'product_images/');
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'url' => '/product_images/' . $uniqueName,
-                    ]);
-                }
+                // $productImages->addMultipleMediaFromRequest('product_images')->toMediaCollection('product_images');
+                $this->uploadMultiple($productImages, $product, 'product_images');
             }
             DB::commit();
             return $product;
@@ -57,27 +54,21 @@ class AdminProductService
     {
         try{
             DB::beginTransaction();
-            $product = Product::find($id);
+            $product = $this->getProductById($id);
             if($request->hasFile('product_images')) {
                 $productImages = $request->file('product_images');
-                foreach ($productImages as $image) {
-                    $uniqueName = $this->uniqueImageName($image, 'product_images/');
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'url' => '/product_images/' . $uniqueName,
-                    ]);
-                }
+                $this->uploadMultiple($productImages, $product, 'product_images');
             }
-            $result = $product->update($request->all());
+            $product->update($request->all());
             DB::commit();
-            return $result;
+            return true;
         }catch(\Exception $e){
             DB::rollBack();
             throw new \Exception('Failed to update product: ' . $e->getMessage());
         }
     }
 
-    public function delete($request, $id)
+    public function destroy($request, $id)
     {
         try{
             if($request->has('ids')) {
@@ -92,16 +83,12 @@ class AdminProductService
         }
     }
 
-    public function deleteImage($id)
+    public function deleteImage($productId, $imageId)
     {
         try{
-            $productImage = ProductImage::find($id);
-            if(!empty($productImage->url)){
-                // Xóa ảnh trong client 
-                $publicPath = public_path($productImage->url);
-                unlink($publicPath);
-            }
-            $result = $productImage->delete();
+            $product = $this->getProductById($productId);
+            $mediaItems = $product->getMedia('product_images');
+            $result = $mediaItems->find($imageId)->delete();
             return $result;
         }catch(\Exception $e){
             throw new \Exception('Failed to delete product image: ' . $e->getMessage());

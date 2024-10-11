@@ -25,8 +25,9 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('admin.login.action'), {
-        /* Đặt lại giá trị của trường password trong form về trạng thái ban đầu (thường là một chuỗi rỗng). */
-        onFinish: () => form.reset('password'),
+        onFinish: () => {
+            form.reset();
+        },
         onError: (page) => {
             error(page);
         }
@@ -43,6 +44,9 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
+            <h1 class="text-xl m-1 font-bold leading-tight tracking-tight text-center text-gray-900 md:text-3xl dark:text-white">
+                Log in
+            </h1>
             <div>
                 <InputLabel for="email" value="Email" />
 
@@ -51,7 +55,6 @@ const submit = () => {
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
-                    required
                     autofocus
                     autocomplete="username"
                 />
@@ -67,13 +70,12 @@ const submit = () => {
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
-                    required
                     autocomplete="current-password"
                 />
 
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
-
+                
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
@@ -84,7 +86,7 @@ const submit = () => {
             <div class="flex items-center justify-end mt-4">
                 <Link
                     v-if="canResetPassword"
-                    :href="route('password.request')"
+                    :href="route('admin.password.request')"
                     class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     Forgot your password?
@@ -93,7 +95,9 @@ const submit = () => {
                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
                 </PrimaryButton>
+                
             </div>
+            
         </form>
     </GuestLayout>
 </template>

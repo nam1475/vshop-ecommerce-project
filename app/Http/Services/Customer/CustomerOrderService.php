@@ -12,6 +12,11 @@ use Stripe\Stripe;
 use Stripe\StripeClient;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Support\Facades\DB;
+use App\Mail\Checkout;
+use App\Models\Customer;
+use App\Notifications\Checkout as NotificationsCheckout;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class CustomerOrderService
 {
@@ -34,8 +39,8 @@ class CustomerOrderService
                     }
                 }
             }
-            
-            $stripe = new StripeClient(env('STRIPE_SECRET_KEY'));
+
+            $stripe = new StripeClient(config('services.stripe.secret'));
             $lineItems = [];
             foreach($mergeData as $item){
                 $lineItems[] = [
@@ -63,6 +68,7 @@ class CustomerOrderService
                 'cancel_url' => route('customer.order.cancel'),
             ]);
 
+            
             $mainAddress = $customer->customerAddress()->where('is_main', 1)->first();
             $mainAddress->update($address);
             $order = Order::create([
@@ -95,15 +101,17 @@ class CustomerOrderService
             return $checkoutSession->url;
         }catch(\Exception $e){
             DB::rollBack();
-            throw $e;
+            throw new \Exception($e->getMessage());
         }
     }
 
     public function success(Request $request)
     {
-        Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-        $sessionId = $request->get('session_id');
         try {
+            DB::beginTransaction();
+
+            Stripe::setApiKey(config('services.stripe.secret'));
+            $sessionId = $request->get('session_id');
             $session = Session::retrieve($sessionId);
             if (!$session) {
                 throw new NotFoundHttpException();
@@ -115,7 +123,7 @@ class CustomerOrderService
             foreach ($orderItems as $item) {
                 $item->product->decrement('quantity', $item->quantity);
             }
-
+            
             if (!$order || !$order->payment) {
                 throw new NotFoundHttpException();
                 return false;
@@ -128,9 +136,21 @@ class CustomerOrderService
                 $order->payment->status = 'paided';
                 $order->payment->save();
             }
+
+            /* Gửi email */
+            // Mail::to(auth('customer')->user()->email)->send(new Checkout());
+            // Mail::mailer('mailgun')->send(new Checkout());
+            // Mail::send(new Checkout());
+            $customer = $request->user('customer');
+            $customer->notify(new NotificationsCheckout($order));
+            // Notification::send($customer, new NotificationsCheckout($order)); 
+            
+            DB::commit();
             return true;
         } catch (\Exception $e) {
-            throw new NotFoundHttpException();
+            DB::rollBack();
+            // throw new NotFoundHttpException();
+            throw new \Exception($e->getMessage());
             return false;
         }
     }

@@ -16,18 +16,26 @@ class AdminCustomerController extends Controller
     {
         $this->adminCustomerService = $adminCustomerService;
     }
-    public function list()
+    public function index()
     {
-        return Inertia::render('Admin/Customer/List', [
+        return Inertia::render('Admin/Customer/Index', [
             'customers' => Customer::paginate(10)
         ]);
     }
 
-    public function delete(Request $request, $id = null)
+    public function edit($id)
     {
-        $result = $this->adminCustomerService->delete($request, $id);
+        return Inertia::render('Admin/Customer/Edit', [
+            'customer' => $this->adminCustomerService->getCustomerById($id),
+            'customerAddresses' => $this->adminCustomerService->getCustomerAddresses($id),
+        ]);
+    }
+
+    public function destroy(Request $request, $id = null)
+    {
+        $result = $this->adminCustomerService->destroy($request, $id);
         if($result){
-            return redirect()->route('admin.customer.list')->with('success', 'Customer deleted successfully.');
+            return redirect()->route('admin.customer.index')->with('success', 'Customer deleted successfully.');
         }
         return redirect()->back()->with('error', 'Failed to delete customer.');
 

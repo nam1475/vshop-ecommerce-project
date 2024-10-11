@@ -51,7 +51,7 @@ class AdminOrderService
         }
     }
 
-    public function delete($request, $id)
+    public function destroy($request, $id)
     {
         try{
             if($request->has('ids')) {

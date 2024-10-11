@@ -10,10 +10,14 @@
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.8",
+        "spatie/laravel-medialibrary": "10.10",
         "spatie/laravel-permission": "^6.9",
         "spatie/laravel-sluggable": "^3.6",
         "stripe/stripe-php": "^15.7",
+        "symfony/http-client": "^7.1",
+        "symfony/mailgun-mailer": "^7.1",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

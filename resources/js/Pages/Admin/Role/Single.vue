@@ -13,7 +13,7 @@ function deleteRole(id){
     .then((result) => {
       if (result.isConfirmed) {
         try{
-          router.delete(route("admin.role.delete", id), {
+          router.delete(route("admin.role.destroy", id), {
             onSuccess: (page) => {
               console.log(123);
               success(page);
@@ -36,7 +36,7 @@ function deleteRole(id){
         class="border-b dark:border-gray-700"
     >
         <td class="w-4 p-4">
-          <CheckboxChildren :data="role"/>
+          <CheckboxChildren :data="role.id"/>
         </td>
         <th
           scope="row"

@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use HasFactory, HasSlug;
+    use HasFactory, HasSlug, InteractsWithMedia;
 
     protected $table = 'products';
     protected $fillable = [
@@ -36,10 +37,17 @@ class Product extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function images()
-    {
-        return $this->hasMany(ProductImage::class);
-    }
+    // public function images()
+    // {
+    //     return $this->hasMany(ProductImage::class);
+    // }
+
+    // public function images()
+    // {
+    //     return $this->getMedia('product_images')->map(function ($mediaItem) {
+    //         return $mediaItem->getUrl();
+    //     });
+    // }
 
     public function category(){
         return $this->belongsTo(Category::class);

@@ -8,36 +8,29 @@ import { Plus } from "@element-plus/icons-vue";
 
 const props = defineProps({
   category: Object,
-  categories: Array
+  categories: Array,
+  image: Array,
 });
 
 const form = useForm({
   name: props.category.name,
   parent_id: props.category.parent_id != null ? props.category.parent_id : "",
-  url: props.category.url,
+  category_image: props.image,
 });
-
-const uploadImage = ref([]);
-if(props.category.url != null){
-  uploadImage.value.push({'url': props.category.url});
-}
 
 function updateCategory() {
   const formData = new FormData();
   formData.append("name", form.name);
   formData.append("parent_id", form.parent_id);
   formData.append("_method", "PUT");
-  // uploadImage.value.forEach((file) => {
-  //   formData.append("url[]", file);
-  // });
-  formData.append("image", uploadImage.value[0]);
+  formData.append("category_image", form.category_image[0]);
 
   router.post(route("admin.category.update", props.category.id), formData, {
     onSuccess: (page) => {
-        success(page);
+      success(page);
     },
     onError: (page) => {
-        error(page);
+      error(page);
     },
   });
 }
@@ -52,10 +45,9 @@ function handlePictureCardPreview(file) {
 
 function handleRemove(file) {
   if (!file.raw) {
-    form.delete(route("admin.category.delete.image", props.category.id), {
+    form.delete(route("admin.category.delete.image", { categoryId: props.category.id, imageId: file.id }), {
       onSuccess: (page) => {
         success(page);
-        uploadImage.value = [];
       },
       onError: (page) => {
         error(page);
@@ -63,12 +55,12 @@ function handleRemove(file) {
     });
   }
   else{
-    uploadImage.value.splice(uploadImage.value.indexOf(file.raw), 1);
+    form.category_image.splice(form.category_image.indexOf(file.raw), 1);
   }
 }
 
 function handleFileUpload(file) {
-  uploadImage.value.push(file.raw);
+  form.category_image.push(file.raw);
 }
 
 </script>
@@ -123,7 +115,7 @@ function handleFileUpload(file) {
         :auto-upload="false"
         :on-change="handleFileUpload"
         :limit="1"
-        :file-list="uploadImage ? uploadImage : []"
+        :file-list="form.category_image"
       >
         <el-icon><Plus /></el-icon>
       </el-upload>

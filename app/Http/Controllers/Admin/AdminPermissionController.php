@@ -20,16 +20,16 @@ class AdminPermissionController extends Controller
     {
         $this->adminPermissionService = $adminPermissionService;
     }
-    public function list()
+    public function index()
     {
-        return Inertia::render('Admin/Permission/List', [
+        return Inertia::render('Admin/Permission/Index', [
             'permissions' => Permission::paginate(10)
         ]);
     }
 
-    public function add()
+    public function create()
     {
-        return Inertia::render('Admin/Permission/Add', [
+        return Inertia::render('Admin/Permission/Create', [
             'tables' => TableName::cases(),
             'actions' => ActionName::cases()
         ]);
@@ -39,9 +39,9 @@ class AdminPermissionController extends Controller
     {
         $result = $this->adminPermissionService->store($request);
         if($result){
-            return redirect()->route('admin.permission.list')->with('success', 'Permission created successfully.');
+            return redirect()->route('admin.permission.index')->with('success', 'Permission created successfully.');
         }
-        return redirect()->route('admin.permission.list');
+        return redirect()->route('admin.permission.index');
     }
 
     public function edit($id)
@@ -55,16 +55,16 @@ class AdminPermissionController extends Controller
     {
         $result = $this->adminPermissionService->update($request, $id);
         if($result){
-            return redirect()->route('admin.permission.list')->with('success', 'Permission updated successfully.');
+            return redirect()->route('admin.permission.index')->with('success', 'Permission updated successfully.');
         }
         return redirect()->back()->with('error', 'Failed to update permission.');
     }
 
-    public function delete(Request $request, $id = null)
+    public function destroy(Request $request, $id = null)
     {
-        $result = $this->adminPermissionService->delete($request, $id);
+        $result = $this->adminPermissionService->destroy($request, $id);
         if($result){
-            return redirect()->route('admin.permission.list')->with('success', 'Permission deleted successfully.');
+            return redirect()->route('admin.permission.index')->with('success', 'Permission deleted successfully.');
         }
         return redirect()->back()->with('error', 'Failed to delete permission.');
     }

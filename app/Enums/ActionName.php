@@ -2,7 +2,7 @@
 namespace App\Enums;
 
 enum ActionName: string {
-    case List = 'list';
+    case Index = 'index';
     case Add = 'add';
     case Edit = 'edit';
     case Delete = 'delete';

@@ -74,7 +74,7 @@ class CustomerCategoryService
                 });
         }
 
-        return $query->with('images')->paginate(4)->withQueryString();
+        return $query->paginate(4)->withQueryString();
     }
 
     public function getProductPriceMinMaxByCategory($category)
@@ -82,7 +82,10 @@ class CustomerCategoryService
         $productIds = $this->productService->getProductIdsByCategory($category);
         $priceMin = Product::whereIn('id', $productIds)->min('price');
         $priceMax = Product::whereIn('id', $productIds)->max('price');
-        return [$priceMin, $priceMax];
+        return [
+            'price_min' => $priceMin,
+            'price_max' => $priceMax
+        ];
     }
 
     public function getCategoryBySlug($slug)
@@ -90,7 +93,6 @@ class CustomerCategoryService
         return Category::where('slug', $slug)->first();
     }
 
-    
     public function getChildrenCategoryIds($categories)
     {
         $ids = collect($categories->pluck('id'));

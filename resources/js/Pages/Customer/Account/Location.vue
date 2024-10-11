@@ -64,12 +64,14 @@
 
 import { computed, onMounted, ref, watch, defineProps, defineEmits, defineModel } from 'vue';
 import { useStore } from 'vuex';
+import InputError from '@/Components/InputError.vue';
 
-// const props = defineProps({
-//   selectedProvince: String,
-//   selectedDistrict: String,
-//   selectedWard: String,
-// });
+const props = defineProps({
+  // selectedProvince: String,
+  // selectedDistrict: String,
+  // selectedWard: String,
+  errors: Object
+});
 
 // const emit = defineEmits(['update:selectedProvince', 'update:selectedDistrict', 'update:selectedWard']);
 
@@ -138,7 +140,6 @@ onMounted(() => {
     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
       Province
     </label>
-    <!-- <select v-model="selectedProvince" @change="fetchDistricts" class="p-2 w-full"> -->
     <!-- <select v-model="localSelectedProvince" @change="emitProvince" class="p-2 w-full"> -->
     <select v-model="selectedProvince" class="p-2 w-full">
       <option value="" disabled>Select province</option>
@@ -150,14 +151,15 @@ onMounted(() => {
         {{ province.name }}
       </option>
     </select>
+    <InputError v-if="errors" :message="errors.province" />
   </div>
 
   <div class="col-span-1">
     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
       District
     </label>
-    <select v-model="selectedDistrict" class="p-2 w-full">
     <!-- <select v-model="localSelectedDistrict" @change="emitDistrict" class="p-2 w-full"> -->
+    <select v-model="selectedDistrict" class="p-2 w-full">
       <option value="" disabled>Select district</option>
       <option 
         v-for="district in districts" 
@@ -167,14 +169,15 @@ onMounted(() => {
         {{ district.name }}
       </option>
     </select>
+    <InputError v-if="errors" :message="errors.district" />
   </div>
 
   <div class="col-span-1">
     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
       Ward
     </label>
-    <select v-model="selectedWard" class="p-2 w-full">
     <!-- <select v-model="localSelectedWard" @change="emitWard" class="p-2 w-full"> -->
+    <select v-model="selectedWard" class="p-2 w-full">
       <option value="" disabled>Select ward</option>
       <option 
         v-for="ward in wards" 
@@ -184,39 +187,9 @@ onMounted(() => {
         {{ ward.name }}
       </option>
     </select>
+    <InputError v-if="errors" :message="errors.ward" />
   </div>
-
-  <!-- <div>
-    <div>
-      <label for="province">Tỉnh/Thành phố:</label>
-      <select id="province" v-model="selectedProvince" @change="fetchDistricts">
-        <option value="" disabled>Chọn Tỉnh/Thành phố</option>
-        <option v-for="province in provinces" :key="province.code" :value="province.code">
-          {{ province.name }}
-        </option>
-      </select>
-    </div>
-
-    <div v-if="selectedProvince">
-      <label for="district">Quận/Huyện:</label>
-      <select id="district" v-model="selectedDistrict" @change="fetchWards">
-        <option value="" disabled>Chọn Quận/Huyện</option>
-        <option v-for="district in districts" :key="district.code" :value="district.code">
-          {{ district.name }}
-        </option>
-      </select>
-    </div>
-
-    <div v-if="selectedDistrict">
-      <label for="ward">Xã/Phường:</label>
-      <select id="ward" v-model="selectedWard">
-        <option value="" disabled>Chọn Xã/Phường</option>
-        <option v-for="ward in wards" :key="ward.code" :value="ward.code">
-          {{ ward.name }}
-        </option>
-      </select>
-    </div>
-  </div> -->
+  
 </template>
 
 

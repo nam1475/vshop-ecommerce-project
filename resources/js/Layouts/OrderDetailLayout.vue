@@ -6,6 +6,8 @@ const props = defineProps({
     orderData: Object
 });
 
+console.log(props.orderData);
+    
 const customer = computed(() => usePage().props.auth.customer);
 
 function formatNumber(number) {
@@ -29,7 +31,7 @@ function getTotalPrice(price, quantity){
                 <div class="space-y-4 p-6" v-for="item in orderData.order_items" :key="item.id">
                     <div class="flex items-center gap-6">
                         <a href="#" class="h-26 w-20 shrink-0">
-                            <img class="h-full w-full dark:hidden" :src="item.product.images[0].url" alt="imac image" />
+                            <img class="h-full w-full dark:hidden" :src="item.product.images[0]" alt="imac image" />
                         </a>
 
                         <a :href="route('customer.product.details', item.product.slug)" class="min-w-0 flex-1 font-medium text-gray-900 hover:underline dark:text-white">
@@ -92,7 +94,7 @@ function getTotalPrice(price, quantity){
                         </dl>
                         <dl class="sm:flex items-center justify-between gap-4">
                             <dt class="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Address</dt>
-                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ orderData.customer_address.address }}, {{ orderData.customer_address.state }}, {{ orderData.customer_address.city }}</dd>
+                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ orderData.customer_address.address }}, {{ orderData.customer_address.ward }}, {{ orderData.customer_address.district }}, {{ orderData.customer_address.province  }}</dd>
                         </dl>
                         <dl class="sm:flex items-center justify-between gap-4">
                             <dt class="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Phone</dt>

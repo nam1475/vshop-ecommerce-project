@@ -4,9 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Traits\Images;
 
 class ProductResource extends JsonResource
 {
+    use Images;
     /**
      * Transform the resource into an array.
      *
@@ -22,10 +24,11 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'images' => $this->whenLoaded('images', function () {
-                return ProductImageResource::collection($this->images);
+            // 'images' => $this->whenLoaded('images', function () {
+            //     return ProductImageResource::collection($this->images);
+            // }),
+            'images' => $this->getMedia('product_images')->map(function ($mediaItem) {
+                return $mediaItem->getUrl();
             }),
             'category_id' => $this->category_id,
             'category' => new CategoryResource($this->whenLoaded('category')),

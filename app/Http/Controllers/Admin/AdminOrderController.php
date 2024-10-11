@@ -20,9 +20,9 @@ class AdminOrderController extends Controller
         $this->adminOrderService = $adminOrderService;
     }
 
-    public function list()
+    public function index()
     {
-        return Inertia::render('Admin/Order/List', [
+        return Inertia::render('Admin/Order/Index', [
             'orders' => $this->adminOrderService->getOrders(),
             'statuses' => $this->adminOrderService->getOrderStatuses(),
         ]);
@@ -44,9 +44,9 @@ class AdminOrderController extends Controller
         return redirect()->back()->with('error', 'Order updated failed');
     }
 
-    public function delete(Request $request, $id = null)
+    public function destroy(Request $request, $id = null)
     {
-        $result =  $this->adminOrderService->delete($request, $id);
+        $result =  $this->adminOrderService->destroy($request, $id);
         if($result){
             return redirect()->back()->with('success', 'Order deleted successfully');
         }

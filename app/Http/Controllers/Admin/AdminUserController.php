@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Admin\AdminUserRequest;
 use App\Http\Services\Admin\AdminRoleService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -21,25 +21,25 @@ class AdminUserController extends Controller
         $this->adminRoleService = $adminRoleService;
     }
     
-    public function list()
+    public function index()
     {
-        return Inertia::render('Admin/User/List', [
+        return Inertia::render('Admin/User/Index', [
             'users' => User::with('roles')->paginate(10)
         ]);
     }
 
-    public function add()
+    public function create()
     {
-        return Inertia::render('Admin/User/Add', [
+        return Inertia::render('Admin/User/Create', [
             'roles' => $this->adminRoleService->getRoles()
         ]);
     }
 
-    public function store(RegisterRequest $request)
+    public function store(AdminUserRequest $request)
     {
         $result = $this->adminUserService->store($request);
         if($result){
-            return redirect()->route('admin.user.list')->with('success', 'User created successfully.');
+            return redirect()->route('admin.user.index')->with('success', 'User created successfully.');
         }
         return redirect()->back()->with('error', 'Failed to create user.');
     }
@@ -57,16 +57,16 @@ class AdminUserController extends Controller
     {
         $result = $this->adminUserService->update($request, $id);
         if($result){
-            return redirect()->route('admin.user.list')->with('success', 'User updated successfully.');
+            return redirect()->route('admin.user.index')->with('success', 'User updated successfully.');
         }
         return redirect()->back()->with('error', 'Failed to update user.');
     }   
 
-    public function delete(Request $request, $id = null)
+    public function destroy(Request $request, $id = null)
     {
-        $result = $this->adminUserService->delete($request, $id);
+        $result = $this->adminUserService->destroy($request, $id);
         if($result){
-            return redirect()->route('admin.user.list')->with('success', 'User deleted successfully.');
+            return redirect()->route('admin.user.index')->with('success', 'User deleted successfully.');
         }
         return redirect()->back()->with('error', 'Failed to delete user.');
     }

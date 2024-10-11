@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Services\Admin\AdminCategoryService;
+use App\Models\Category;
 use App\Traits\CartTrait;
+use App\Traits\Images;
 
 class HandleInertiaRequests extends Middleware
 {
 
-    use CartTrait;
+    use CartTrait, Images;
 
     /**
      * The root template that is loaded on the first page visit.
@@ -42,6 +44,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $categories = $this->categoryService->getCategories()->get();
+        $this->getAllImagesByCollection($categories, 'category_images');
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -58,9 +63,9 @@ class HandleInertiaRequests extends Middleware
 
             'cart' => new CartResource($this->getProductsAndCartItems()),
 
-            // 'customerAddress' => new CustomerAddressResource(CustomerAddress::where('customer_id', $request->user('customer')->id)->first()),
             
-            'categories' => $this->categoryService->getCategories()->get(),
+            // 'categories' => $this->categoryService->getCategories()->get(),
+            'categories' => $categories,
 
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

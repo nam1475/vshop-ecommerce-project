@@ -5,8 +5,8 @@ import Main from '@/Pages/Customer/Components/Layout/Main.vue'
 import { computed, defineProps } from 'vue'
 import { usePage } from '@inertiajs/vue3';
 
-defineProps({
-  products: Array,
+const props = defineProps({
+  products: Object,
 });
 
 const categories = computed(() => usePage().props.categories);
@@ -17,7 +17,6 @@ const categories = computed(() => usePage().props.categories);
 <Main>
   <!-- Slider -->
   <Slider :categories="categories"/>
-  <!-- <Slider /> -->
   
   <!-- Content -->
   <ProductList :products="products" />

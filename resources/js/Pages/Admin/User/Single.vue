@@ -13,7 +13,7 @@ function deleteUser(id){
     .then((result) => {
       if (result.isConfirmed) {
         try{
-          router.delete(route("admin.user.delete", id), {
+          router.delete(route("admin.user.destroy", id), {
             onSuccess: (page) => {
               success(page);
             },
@@ -35,7 +35,7 @@ function deleteUser(id){
         class="border-b dark:border-gray-700"
     >
         <td class="w-4 p-4">
-          <CheckboxChildren :data="user"/>
+          <CheckboxChildren :data="user.id"/>
         </td>
         <th
           scope="row"

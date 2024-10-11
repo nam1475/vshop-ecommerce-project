@@ -5,8 +5,9 @@ import Pagination from '@/Pages/Admin/Components/Pagination.vue'
 import { addToCart } from '@/addToCart.js';
 
 defineProps({
-  products: [Array, Object]
+  products: Object,
 });
+
 
 </script>
 
@@ -20,7 +21,7 @@ defineProps({
         <div v-for="product in products.data" :key="product.id" class="group">
           <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
             <Link :href="route('customer.product.details', product.slug)">
-              <img v-if="product.images.length > 0" :src="product.images[0].url" class="h-full w-full object-cover object-center group-hover:opacity-75" />
+              <img v-if="product.images.length" :src="product.images[0]" class="h-full w-full object-cover object-center group-hover:opacity-75" />
             </Link>
           </div>
           <h3 class="mt-4 text-sm text-gray-700">{{ product.name }}</h3>
@@ -39,7 +40,8 @@ defineProps({
     </div> -->
     
     <div class="flex justify-center">
-      <Pagination :links="products.links" />
+      <!-- <Pagination :links="products.links" /> -->
+      <Pagination :links="products.meta.links" />
     </div>
 
 

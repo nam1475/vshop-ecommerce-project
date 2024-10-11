@@ -13,7 +13,7 @@ function deleteCustomer(id){
     .then((result) => {
       if (result.isConfirmed) {
         try{
-          router.delete(route("admin.customer.delete", id), {
+          router.delete(route("admin.customer.destroy", id), {
             onSuccess: (page) => {
               success(page);
             },
@@ -35,7 +35,7 @@ function deleteCustomer(id){
         class="border-b dark:border-gray-700"
     >
         <td class="w-4 p-4">
-          <CheckboxChildren :data="customer"/>
+          <CheckboxChildren :data="customer.id"/>
         </td>
         <th
           scope="row"
@@ -74,6 +74,13 @@ function deleteCustomer(id){
               class="py-1 text-sm text-gray-700 dark:text-gray-200"
               :id="`${customer.id}-button`"
             >
+              <li>
+                <Link
+                  :href="route('admin.customer.edit', customer.id)"
+                  class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                  >Edit
+                </Link>
+              </li>
             </ul>
             <div class="py-1">
               <a

@@ -11,10 +11,14 @@ use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:index dashboard')->only(['index']);
+    }
+
     public function index()
     {
         $data = [
-            'title' => 'Admin Dashboard',
             'totalOrders' => Order::count(),
             'totalProducts' => Product::count(),
             'totalCustomers' => Customer::count(),

@@ -7,10 +7,12 @@ use Illuminate\Support\Str;
 use App\Traits\HelperTrait;
 use App\Traits\Searchable;
 use App\Traits\Filterable;
+use Illuminate\Support\Facades\DB;
+use App\Traits\UploadAble;
 
 class AdminCategoryService
 {
-    use HelperTrait, Searchable, Filterable;
+    use HelperTrait, Searchable, Filterable, UploadAble;
 
     public function getCategoryById($id)
     {
@@ -37,20 +39,19 @@ class AdminCategoryService
     public function store($request)
     {
         try{
+            DB::beginTransaction();
             $category = Category::create([
                 'name' => $request->name,
                 'parent_id' => $request->parent_id,
             ]);
-            if($request->hasFile('image')) {
-                $categoryImage = $request->file('image');
-                $uniqueName = $this->uniqueImageName($categoryImage, 'category_images/');
-                $path = '/category_images/' . $uniqueName;
-                $category->update([
-                    'url' => $path,
-                ]);
+            if($request->hasFile('category_image')) {
+                $categoryImage = $request->file('category_image');
+                $this->uploadOne($categoryImage, $category, 'category_images');
             }
+            DB::commit();
             return true;
         } catch(\Exception $e){
+            DB::rollBack();
             throw new \Exception('Failed to create category: ' . $e->getMessage());
         }
     }
@@ -58,24 +59,25 @@ class AdminCategoryService
     public function update($request, $id) 
     {
         try{
+            DB::beginTransaction();
             $category = $this->getCategoryById($id);
             $category->update([
                 'name' => $request->name,
                 'parent_id' => $request->parent_id,
             ]);
-            if($request->hasFile('image')) {
-                $categoryImage = $request->file('image');
-                $uniqueName = $this->uniqueImageName($categoryImage, 'category_images/');
-                $path = '/category_images/' . $uniqueName;
-                $category->update(['url' => $path]);
+            if($request->hasFile('category_image')) {
+                $categoryImage = $request->file('category_image');
+                $this->uploadOne($categoryImage, $category, 'category_images');
             }
+            DB::commit();
             return true;
         } catch(\Exception $e){
+            DB::rollBack();
             throw new \Exception('Failed to update category: ' . $e->getMessage());
         }
     }
 
-    public function delete($request, $id)
+    public function destroy($request, $id)
     {
         try{
             if($request->has('ids')) {
@@ -90,13 +92,12 @@ class AdminCategoryService
         }
     }
 
-    public function deleteImage($id)
+    public function deleteImage($categoryId, $imageId)
     {
         try{
-            $category = $this->getCategoryById($id);
-            $publicPath = public_path($category->url);
-            unlink($publicPath);
-            $result = $category->update(['url' => null]);
+            $category = $this->getCategoryById($categoryId);
+            $mediaItems = $category->getMedia('category_images');
+            $result = $mediaItems->find($imageId)->delete();
             return $result;
         } catch(\Exception $e){
             throw new \Exception('Failed to delete image: ' . $e->getMessage());

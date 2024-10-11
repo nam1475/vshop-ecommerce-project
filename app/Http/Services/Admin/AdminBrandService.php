@@ -9,7 +9,7 @@ use App\Traits\Searchable;
 class AdminBrandService
 {
     use HelperTrait, Searchable;
-    
+
     public function getBrandById($id)
     {
         return Brand::find($id);
@@ -46,7 +46,7 @@ class AdminBrandService
         }
     }
 
-    public function delete($request, $id)
+    public function destroy($request, $id)
     {
         try{
             if($request->has('ids')) {

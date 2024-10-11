@@ -6,6 +6,7 @@ import Modal from '@/Pages/Customer/Components/Modal.vue';
 import { success, error, warning } from '@/alert';
 import Location from '@/Pages/Customer/Account/Location.vue';
 import { useStore } from 'vuex'
+import InputError from '@/Components/InputError.vue';
 
 const props = defineProps({
     customerAddresses: Array
@@ -34,9 +35,9 @@ const formAddAddress = useForm({
     name: customer.name || '',
     phone: customer.phone || '',
     address: '',
-    province: null,
-    district: null,
-    ward: null,
+    province: '',
+    district: '',
+    ward: '',
     is_main: 0,
     customer_id: customer.id
 });
@@ -97,27 +98,31 @@ function deleteAddress(addressId){
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Name 
                             </label>
-                            <input v-model="formAddAddress.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name">
+                            <input v-model="formAddAddress.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Name">
+                            <InputError :message="formAddAddress.errors.name" />
                         </div>
                         
                         <div class="col-span-1">
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Phone 
                             </label>
-                            <input v-model="formAddAddress.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone">
+                            <input v-model="formAddAddress.phone" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Phone">
+                            <InputError :message="formAddAddress.errors.phone" />
                         </div>
 
                         <div class="col-span-1">
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Address 
                             </label>
-                            <input v-model="formAddAddress.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address">
+                            <input v-model="formAddAddress.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Address">
+                            <InputError :message="formAddAddress.errors.address" />
                         </div>
 
                         <Location 
                             v-model:selectedProvince="formAddAddress.province" 
                             v-model:selectedDistrict="formAddAddress.district" 
                             v-model:selectedWard="formAddAddress.ward"
+                            :errors="formAddAddress.errors"
                         />
                         <!-- <Location 
                             :selectedProvince="formAddAddress.province" 
@@ -137,7 +142,7 @@ function deleteAddress(addressId){
 
                     <!-- Modal footer -->
                     <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                        <button type="submit" data-modal-hide="modal-add-address" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Submit
                         </button>
                         <button data-modal-hide="modal-add-address" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
@@ -171,21 +176,21 @@ function deleteAddress(addressId){
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Name 
                                     </label>
-                                    <input v-model="ca.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Name">
+                                    <input v-model="ca.name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Name">
                                 </div>
                                 
                                 <div class="col-span-1">
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Phone 
                                     </label>
-                                    <input v-model="ca.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Phone">
+                                    <input v-model="ca.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Phone">
                                 </div>
 
                                 <div class="col-span-1">
                                     <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                         Address
                                     </label>
-                                    <input v-model="ca.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Address">
+                                    <input v-model="ca.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Address">
                                 </div>
 
                                 <Location 
@@ -206,7 +211,7 @@ function deleteAddress(addressId){
 
                             <!-- Modal footer -->
                             <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                <button type="submit" :data-modal-hide="`modal-edit-address-${ca.id}`" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                     Submit
                                 </button>
                                 <button :data-modal-hide="`modal-edit-address-${ca.id}`" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">

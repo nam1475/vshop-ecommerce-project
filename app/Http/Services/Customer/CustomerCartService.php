@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerCartService
 {
-    public function store($request, $id)
+    public function store($request, $productId)
     {
         try{
+            DB::beginTransaction();
             $customerId = auth('customer')->user()->id;
-            $cartItem = CartItem::where(['product_id' => $id, 'customer_id' => $customerId])->first();
+            $cartItem = CartItem::where(['product_id' => $productId, 'customer_id' => $customerId])->first();
             $quantity = $request->quantity;
             if($cartItem){
                 // $cart = $cartItem->update(['quantity' => $cartItem->quantity + $quantity]);
@@ -23,12 +24,14 @@ class CustomerCartService
             else{
                 CartItem::create([
                     'customer_id' => $customerId,
-                    'product_id' => $id,
+                    'product_id' => $productId,
                     'quantity' => $quantity
                 ]);
             }
+            DB::commit();
             return true;
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new \Exception('Failed to add to cart: ' . $e->getMessage());
         }
     }
@@ -72,7 +75,7 @@ class CustomerCartService
         }
     }
 
-    public function delete($cartId)
+    public function destroy($cartId)
     {
         try{
             $cart = CartItem::find($cartId);

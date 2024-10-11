@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AdminRoleRequest;
 use App\Http\Services\Admin\AdminPermissionService;
 use App\Http\Services\Admin\AdminRoleService;
 use Illuminate\Http\Request;
@@ -18,25 +19,25 @@ class AdminRoleController extends Controller
         $this->adminRoleService = $adminRoleService;
         $this->adminPermissionService = $adminPermissionService;
     }
-    public function list()
+    public function index()
     {
-        return Inertia::render('Admin/Role/List', [
+        return Inertia::render('Admin/Role/Index', [
             'roles' => Role::with('permissions')->paginate(10),
         ]);
     }
 
-    public function add()
+    public function create()
     {
-        return Inertia::render('Admin/Role/Add', [
+        return Inertia::render('Admin/Role/Create', [
             'permissions' => $this->adminPermissionService->getPermissions(),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(AdminRoleRequest $request)
     {
         $result = $this->adminRoleService->store($request);
         if($result){
-            return redirect()->route('admin.role.list')->with('success', 'Role created successfully.');
+            return redirect()->route('admin.role.index')->with('success', 'Role created successfully.');
         }
         return redirect()->back()->with('error', 'Failed to create role.');
     }
@@ -50,20 +51,20 @@ class AdminRoleController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(AdminRoleRequest $request, $id)
     {
         $result = $this->adminRoleService->update($request, $id);
         if($result){
-            return redirect()->route('admin.role.list')->with('success', 'Role updated successfully.');
+            return redirect()->route('admin.role.index')->with('success', 'Role updated successfully.');
         }
         return redirect()->back()->with('error', 'Failed to update role.');
     }
 
-    public function delete(Request $request, $id = null)
+    public function destroy(Request $request, $id = null)
     {
-        $result = $this->adminRoleService->delete($request, $id);
+        $result = $this->adminRoleService->destroy($request, $id);
         if($result){
-            return redirect()->route('admin.role.list')->with('success', 'Role deleted successfully.');
+            return redirect()->route('admin.role.index')->with('success', 'Role deleted successfully.');
         }
         return redirect()->back()->with('error', 'Failed to delete role.');
     }

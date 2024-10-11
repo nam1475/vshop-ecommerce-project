@@ -18,7 +18,7 @@ class RedirectAdmin
     {
         // if(Auth::guard($guard)->check() && Auth::user()->is_admin == 1) {
         if(Auth::guard($guard)->check()) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dashboard.index');
         }
         return $next($request);
     }

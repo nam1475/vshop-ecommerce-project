@@ -16,8 +16,11 @@ use App\Http\Controllers\Customer\CustomerProductController;
 use App\Http\Controllers\Customer\CustomerAccountController;
 use App\Http\Controllers\Admin\AdminCustomerController;
 use App\Http\Controllers\Admin\AdminPermissionController;
+use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\Auth\AdminNewPasswordController;
+use App\Http\Controllers\Admin\Auth\AdminPasswordResetLinkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,63 +33,69 @@ use App\Http\Controllers\Admin\AdminUserController;
 |
 */
 
-/* User */
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::controller(CustomerHomeController::class)->group(function () {
+    // Route::get('/', 'home')->name('home')->middleware('verified');
     Route::get('/', 'home')->name('home');
 });
 
-Route::middleware('customer')->name('customer.')->group(function () {
-    Route::middleware('session.guard:shop')->group(function () {
+Route::name('customer.')->group(function () {
+    /* Guest */
+    Route::controller(CustomerCategoryController::class)->name('category.')->group(function () {
+        Route::get('/category/{slug}', 'index')->name('index');
+    });
 
-        Route::controller(CustomerAccountController::class)->prefix('account')->name('account.')->group(function () {
-            Route::get('/edit', 'edit')->name('edit');
-            Route::patch('/update', 'update')->name('update');
-            Route::delete('/delete', 'destroy')->name('destroy');
+    Route::controller(CustomerProductController::class)->name('product.')->group(function () {
+        Route::get('/product/{slug}', 'details')->name('details');
+    });
+    /* Customer */
+    Route::middleware(['customer', 'verified'])->group(function () {
+        Route::middleware('session.guard:shop')->group(function () {
             
-            Route::get('/info', 'info')->name('info');
-            Route::patch('/info/change-password', 'changePassword')->name('info.changePassword');
-            Route::patch('/info/update-account-info', 'updateAccountInfo')->name('info.update');
+            Route::controller(CustomerAccountController::class)->prefix('account')->name('account.')->group(function () {
+                Route::get('/edit', 'edit')->name('edit');
+                Route::patch('/update', 'update')->name('update');
+                Route::delete('/delete', 'destroy')->name('destroy');
+                
+                Route::get('/info', 'info')->name('info');
+                Route::patch('/info/change-password', 'changePassword')->name('info.changePassword');
+                Route::patch('/info/update-account-info', 'updateAccountInfo')->name('info.update');
 
-            Route::get('/orders', 'orderList')->name('order.list');
-            Route::get('/order/details/{orderId}', 'orderDetails')->name('order.details');
-            Route::patch('/order/cancel/{orderId}', 'cancelOrder')->name('order.cancel');
+                Route::get('/orders', 'orderIndex')->name('order.index');
+                Route::get('/order/details/{orderId}', 'orderDetails')->name('order.details');
+                Route::patch('/order/cancel/{orderId}', 'cancelOrder')->name('order.cancel');
+                
+                Route::prefix('address')->name('address.')->group(function () {
+                    Route::get('/', 'address')->name('index');
+                    Route::post('/address/store', 'storeAddress')->name('store');
+                    Route::patch('/address/update/{addressId}', 'updateAddress')->name('update');
+                    Route::delete('/address/delete/{addressId}', 'deleteAddress')->name('delete'); 
+                });
+                
+            });
+            // Route::resource('address', CustomerAccountController::class)->only(['index', 'store', 'update', 'destroy']);
             
-            Route::prefix('address')->name('address.')->group(function () {
-                Route::get('/', 'address')->name('index');
-                Route::post('/address/store', 'storeAddress')->name('store');
-                Route::patch('/address/update/{addressId}', 'updateAddress')->name('update');
-                Route::delete('/address/delete/{addressId}', 'deleteAddress')->name('delete'); 
+            Route::controller(CustomerCartController::class)->prefix('cart')->name('cart.')->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/store/{productId}', 'store')->name('store');
+                Route::patch('/update/{cartId}', 'update')->name('update');
+                Route::delete('/destroy/{cartId}', 'destroy')->name('destroy');
+                Route::post('/order-again/{orderId}', 'orderAgain')->name('orderAgain');
             });
 
-            Route::get('/location', 'location')->name('location');
-        });
-    
-        Route::controller(CustomerCartController::class)->prefix('cart')->name('cart.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::post('/store/{productId}', 'store')->name('store');
-            Route::patch('/update/{cartId}', 'update')->name('update');
-            Route::delete('/delete/{cartId}', 'delete')->name('delete');
-            Route::post('/order-again/{id}', 'orderAgain')->name('orderAgain');
-        });
+            // Route::resource('cart', CustomerCartController::class)->except(['create', 'edit']);
+            // Route::post('/cart/order-again/{orderId}', [CustomerCartController::class, 'orderAgain'])->name('cart.orderAgain');
         
-        Route::controller(CustomerCategoryController::class)->name('category.')->group(function () {
-            Route::get('/category/{slug}', 'list')->name('list');
+            Route::controller(CustomerOrderController::class)->prefix('order')->name('order.')->group(function () {
+                Route::post('/store', 'store')->name('store');
+                Route::get('/success', 'success')->name('success');
+                Route::get('/cancel', 'cancel')->name('cancel');
+            });
+            
         });
-    
-        Route::controller(CustomerProductController::class)->name('product.')->group(function () {
-            Route::get('/product/{slug}', 'details')->name('details');
-        });
-        
-        Route::controller(CustomerOrderController::class)->prefix('order')->name('order.')->group(function () {
-            Route::post('/store', 'store')->name('store');
-            Route::get('/success', 'success')->name('success');
-            Route::get('/cancel', 'cancel')->name('cancel');
-        });
-        
     });
 
 });
@@ -101,85 +110,61 @@ Route::controller(AdminAuthController::class)->prefix('admin')->name('admin.')->
     Route::post('logout', 'logout')->name('logout')->middleware('admin');
 });
 
+Route::controller(AdminPasswordResetLinkController::class)->prefix('admin')->name('admin.')->group(function () {
+    Route::get('forgot-password', 'create')->name('password.request');
+    Route::post('forgot-password', 'store')->name('password.email');
+});
+
+Route::controller(AdminNewPasswordController::class)->prefix('admin')->name('admin.')->group(function () {
+    Route::get('reset-password/{token}', 'create')->name('password.reset');
+    Route::post('reset-password', 'store')->name('password.store');
+});
+
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::middleware('session.guard:admin')->group(function () {
 
-        Route::controller(AdminDashboardController::class)->group(function () {
-            Route::get('/dashboard', 'index')->name('dashboard');
-        });
+        Route::resource('dashboard', AdminDashboardController::class)->only('index');
 
+        Route::resource('product', AdminProductController::class)->except('destroy');
         Route::controller(AdminProductController::class)->prefix('product')->name('product.')->group(function () {
-            Route::get('/list', 'list')->name('list')->middleware('permission:list product');
-            Route::get('/add', 'add')->name('add')->middleware('permission:add product');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit')->middleware('permission:edit product');
-            Route::put('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete')->middleware('permission:delete product');
-            Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
-        });
+            Route::delete('/{id?}', 'destroy')->name('destroy');
+            // Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
+            Route::delete('/delete/image/{productId}/{imageId}', 'deleteImage')->name('delete.image');
+        }); 
 
+        Route::resource('category', AdminCategoryController::class)->except('destroy');
         Route::controller(AdminCategoryController::class)->prefix('category')->name('category.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
-            Route::put('/update/{id}', 'update')->name('update');
-            // Route::post('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
-        });
-
-        Route::controller(AdminBrandController::class)->prefix('brand')->name('brand.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
-            Route::put('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
-        });
-
-        Route::controller(AdminOrderController::class)->prefix('order')->name('order.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
-            Route::patch('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
+            Route::delete('/{id?}', 'destroy')->name('destroy');
+            // Route::delete('/delete/image/{id}', 'deleteImage')->name('delete.image');
+            Route::delete('/delete/image/{categoryId}/{imageId}', 'deleteImage')->name('delete.image');
         });
         
-        Route::controller(AdminCustomerController::class)->prefix('customer')->name('customer.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
-        });
+        Route::resource('brand', AdminBrandController::class)->except('destroy');
+        Route::delete('brand/{id?}', [AdminBrandController::class, 'destroy'])->name('brand.destroy');
         
-        Route::controller(AdminRoleController::class)->prefix('role')->name('role.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
-            Route::patch('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
-        });
+        Route::resource('order', AdminOrderController::class)->except(['create', 'destroy']);
+        Route::delete('order/{id?}', [AdminOrderController::class, 'destroy'])->name('order.destroy');
+        
+        Route::resource('customer', AdminCustomerController::class)->except(['create', 'store', 'update', 'destroy']);
+        Route::delete('customer/{id?}', [AdminCustomerController::class, 'destroy'])->name('customer.destroy');
 
-        Route::controller(AdminPermissionController::class)->prefix('permission')->name('permission.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
-            Route::patch('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
-        });
+        Route::resource('role', AdminRoleController::class)->except('destroy');
+        Route::delete('role/{id?}', [AdminRoleController::class, 'destroy'])->name('role.destroy');
 
-        Route::controller(AdminUserController::class)->prefix('user')->name('user.')->group(function () {
-            Route::get('/list', 'list')->name('list');
-            Route::get('/add', 'add')->name('add');
-            Route::post('/store', 'store')->name('store');
-            Route::get('/edit/{id}', 'edit')->name('edit');
-            Route::patch('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id?}', 'delete')->name('delete');
-        });
+        Route::resource('permission', AdminPermissionController::class)->except('destroy');
+        Route::delete('permission/{id?}', [AdminPermissionController::class, 'destroy'])->name('permission.destroy');
 
+        Route::resource('user', AdminUserController::class)->except('destroy');
+        Route::delete('user/{id?}', [AdminUserController::class, 'destroy'])->name('user.destroy');
 
+        Route::resource('user', AdminUserController::class)->except('destroy');
+        Route::delete('user/{id?}', [AdminUserController::class, 'destroy'])->name('user.destroy');
+
+        // Route::prefix('user')->name('user.')->group(function () {
+            Route::resource('profile', AdminProfileController::class)->only('index', 'update', 'destroy'); 
+            Route::put('profile/password/update', [AdminProfileController::class, 'updatePassword'])->name('profile.password.update');
+        // });
+        // Route::delete('user/{id?}', [AdminUserController::class, 'destroy'])->name('user.destroy');
 
 
 

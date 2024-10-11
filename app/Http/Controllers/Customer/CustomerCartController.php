@@ -24,16 +24,16 @@ class CustomerCartController extends Controller
         $this->addressService = $customerAddressService;
     }
 
-    public function list()
+    public function index()
     {
-        return Inertia::render('Customer/Cart/List', [
+        return Inertia::render('Customer/Cart/Index', [
             'customerMainAddress' => $this->addressService->getCustomerMainAddress(),
         ]);
     }
 
-    public function store(Request $request, $id)
+    public function store(Request $request, $productId)
     {
-        $result = $this->cartService->store($request, $id);
+        $result = $this->cartService->store($request, $productId);
         if($result) {
             return redirect()->back()->with('success', 'Product added to cart successfully.');
         }
@@ -58,9 +58,9 @@ class CustomerCartController extends Controller
         return redirect()->back()->with('error', 'Something went wrong. Please try again.');
     }
 
-    public function delete($cartId)
+    public function destroy($cartId)
     {
-        $result = $this->cartService->delete($cartId);
+        $result = $this->cartService->destroy($cartId);
         if($result) {
             return redirect()->back()->with('success', 'Product deleted from cart successfully.');
         }

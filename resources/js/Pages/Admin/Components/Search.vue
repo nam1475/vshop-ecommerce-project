@@ -13,7 +13,7 @@ const params = new URLSearchParams(window.location.search);
 const search = ref(params.get('search') || '');
 
 function filter() {
-  router.get(route(`${props.routeName}.list`), {
+  router.get(route(`${props.routeName}.index`), {
     ...(search.value != '' && { search: search.value }),
   },
   {
