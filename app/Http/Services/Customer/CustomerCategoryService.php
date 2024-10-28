@@ -15,7 +15,7 @@ class CustomerCategoryService
     {
         $this->productService = $productService;
     }
-
+    
     public function getProductsByCategory($request, $category)
     {
         /* 

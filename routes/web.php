@@ -51,6 +51,7 @@ Route::name('customer.')->group(function () {
     Route::controller(CustomerProductController::class)->name('product.')->group(function () {
         Route::get('/product/{slug}', 'details')->name('details');
     });
+    
     /* Customer */
     Route::middleware(['customer', 'verified'])->group(function () {
         Route::middleware('session.guard:shop')->group(function () {
@@ -102,6 +103,7 @@ Route::name('customer.')->group(function () {
 
 
 /* Admin */
+/* Auth */
 Route::controller(AdminAuthController::class)->prefix('admin')->name('admin.')->group(function () {
     Route::middleware('redirectAdmin')->group(function () {
         Route::get('login', 'showLoginForm')->name('login');
@@ -120,6 +122,7 @@ Route::controller(AdminNewPasswordController::class)->prefix('admin')->name('adm
     Route::post('reset-password', 'store')->name('password.store');
 });
 
+/* ---------------------- */
 Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     Route::middleware('session.guard:admin')->group(function () {
 

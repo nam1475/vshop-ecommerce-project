@@ -23,7 +23,7 @@ class CustomerAddressRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'phone' => ['required'],
+            'phone' => ['required', 'regex:/^([0-9\s\-\+\(\)]*)$/'],
             'address' => ['required', 'string'],
             'province' => ['required'],
             'district' => ['required'],
@@ -35,7 +35,8 @@ class CustomerAddressRequest extends FormRequest
     {
         return [
             'name.required' => 'Name is required',
-            'phone.required' => 'Phone is required',
+            'phone.required' => 'Phone number is required',
+            'phone.regex' => 'Phone number is not valid',
             'address.required' => 'Address is required',
             'province.required' => 'Province is required',
             'district.required' => 'District is required',

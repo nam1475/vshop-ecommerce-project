@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Xóa tất cả dữ liệu trong bảng users
-        User::truncate();
+        // User::truncate();
 
         // Tạo dữ liệu mới
         $user = User::factory(5)->create();

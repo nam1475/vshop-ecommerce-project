@@ -1,67 +1,4 @@
 <script setup>
-// import axios from "axios";
-// import { ref, reactive, watch, onMounted } from "vue";
-
-// const provinces = ref([]);
-// const districts = ref([]);
-// const wards = ref([]);
-
-// const selectedProvince = ref("");
-// const selectedDistrict = ref("");
-// const selectedWard = ref("");
-
-// const selectedProvinceName = ref("");
-// const selectedDistrictName = ref("");
-// const selectedWardName = ref("");
-
-// const fetchProvinces = async () => {
-//   try {
-//     const response = await axios.get("/api/provinces");
-//     provinces.value = response.data;
-//   } catch (error) {
-//     console.error("Error fetching provinces", error);
-//   }
-// };
-
-// const fetchDistricts = async () => {
-//   try {
-//     const response = await axios.get(`/api/districts/${selectedProvince.value}`);
-//     districts.value = response.data;
-//     selectedProvinceName.value = provinces.value.find(
-//       (p) => p.code === selectedProvince.value
-//     ).name;
-//     selectedDistrict.value = ""; // Reset district when province changes
-//     selectedWard.value = ""; // Reset ward when province changes
-//   } catch (error) {
-//     console.error("Error fetching districts", error);
-//   }
-// };
-
-// const fetchWards = async () => {
-//   try {
-//     const response = await axios.get(`/api/wards/${selectedDistrict.value}`);
-//     wards.value = response.data;
-//     selectedDistrictName.value = districts.value.find(
-//       (d) => d.code === selectedDistrict.value
-//     ).name;
-//     selectedWard.value = ""; // Reset ward when district changes
-//   } catch (error) {
-//     console.error("Error fetching wards", error);
-//   }
-// };
-
-// watch(selectedWard, () => {
-//   const ward = wards.value.find((w) => w.code === selectedWard.value);
-//   if (ward) {
-//     selectedWardName.value = ward.name;
-//   }
-// });
-
-// onMounted(() => {
-//   fetchProvinces();
-// });
-
-
 import { computed, onMounted, ref, watch, defineProps, defineEmits, defineModel } from 'vue';
 import { useStore } from 'vuex';
 import InputError from '@/Components/InputError.vue';
@@ -74,10 +11,6 @@ const props = defineProps({
 });
 
 // const emit = defineEmits(['update:selectedProvince', 'update:selectedDistrict', 'update:selectedWard']);
-
-const selectedProvince = defineModel('selectedProvince');
-const selectedDistrict = defineModel('selectedDistrict');
-const selectedWard = defineModel('selectedWard');
 
 // const localSelectedProvince = ref(props.selectedProvince);
 // const localSelectedDistrict = ref(props.selectedDistrict);
@@ -95,14 +28,15 @@ const selectedWard = defineModel('selectedWard');
 //   emit('update:selectedWard', localSelectedWard.value.name);
 // }
 
+const selectedProvince = defineModel('selectedProvince');
+const selectedDistrict = defineModel('selectedDistrict');
+const selectedWard = defineModel('selectedWard');
+
 const store = useStore();
 const provinces = computed(() => store.getters['location/provinces']);
 const districts = computed(() => store.getters['location/districts']);
 const wards = computed(() => store.getters['location/wards']);
 
-// function findProvinceByName(name) {
-//   return provinces.value.find((p) => p.name == name);
-// }
 
 function fetchProvinces() {
   store.dispatch('location/fetchProvinces');

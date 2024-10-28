@@ -1,12 +1,12 @@
 <script setup>
-import { ref, defineProps, watch, reactive, computed } from 'vue'
+import { ref, defineProps, watch, reactive, computed, onMounted } from 'vue'
 import {
   Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, 
   TransitionChild, TransitionRoot,
 } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/vue/20/solid'
-import { Link, useForm, router } from '@inertiajs/vue3'
+import { Link, useForm, router, usePage } from '@inertiajs/vue3'
 import Main from '@/Pages/Customer/Components/Layout/Main.vue'
 import ProductList from '@/Pages/Customer/Components/ProductList.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
@@ -19,12 +19,12 @@ const props = defineProps({
   countProducts: Number,
   priceMin: Number,
   priceMax: Number,
+  queryStrings: Object
 });
 
 const categorySlug = props.category.slug;
 
 const sortOptions = reactive([
-  { name: 'Newest', type: '' },
   { name: 'Price: Low to High', type: 'asc' },
   { name: 'Price: High to Low', type: 'desc' },
 ]); 
@@ -44,13 +44,6 @@ const filters = [
   },
 ];
 
-// const filterPrice = useForm({
-//   price: {
-//     min: 0,  
-//     max: 500
-//   }
-// });
-
 const params = new URLSearchParams(window.location.search);
 const queryPriceMax = ref(params.get('price_max'));
 const queryPriceMin = ref(params.get('price_min'));
@@ -61,10 +54,10 @@ const queryCategories = ref(params.getAll('categories[]'));
 // const checkedBrands = ref([]);
 // const checkedCategories = ref([]);
 
-const filterPrice = reactive({
-  min: queryPriceMin.value ? queryPriceMin.value : null,  
-  max: queryPriceMax.value ? queryPriceMax.value : null
-});
+// const filterPrice = reactive({
+//   min: queryPriceMin.value ? queryPriceMin.value : null,  
+//   max: queryPriceMax.value ? queryPriceMax.value : null
+// });                                               
 
 // function priceFilter() {
 //   filterPrice.transform(data => ({
@@ -81,7 +74,8 @@ const filterPrice = reactive({
 //     replace: true,
 //     preserveScroll: true
 //   });
-// }
+// }  
+
 
 watch(queryBrands, () => {
   updateFilteredProducts();
@@ -90,7 +84,13 @@ watch(queryCategories, () => {
   updateFilteredProducts();
 });
 
-const price = ref(queryPriceMin.value && queryPriceMax.value ? [queryPriceMin.value, queryPriceMax.value] : [props.priceMin, props.priceMax]);
+function updateSort(type = '') {
+  querySort.value = type;
+  updateFilteredProducts();
+}
+
+const price = ref(queryPriceMin.value && queryPriceMax.value ? [queryPriceMin.value, queryPriceMax.value] 
+                  : [props.priceMin, props.priceMax]);
 
 function updateFilteredProducts(type = '') {
     router.get(route('customer.category.index', categorySlug), 
@@ -103,7 +103,9 @@ function updateFilteredProducts(type = '') {
       price_max: price.value[1],
       // ...(queryPriceMin.value != null && { price_min: queryPriceMin.value }),
       // ...(queryPriceMax.value != null && { price_max: queryPriceMax.value }),
-      ...(type != '' && { sort: type })
+      // ...(type != '' ? { sort: type } : {sort: querySort.value}),
+      // ...((type != '' && { sort: type }) || (querySort.value != null && { sort: querySort.value })),
+      ...(querySort.value != null && { sort: querySort.value }),
     }, 
     {
       preserveState: true,
@@ -113,22 +115,6 @@ function updateFilteredProducts(type = '') {
     );
 }
 
-// function sortFilters(type, option) {
-//   router.get(route('customer.category.index', categorySlug), 
-//   {
-//     sort: type
-//   }, 
-//   {
-//     replace: true,
-//     preserveScroll: true,
-//     // onFinish: () => {
-//     //   option['current'] = true;
-//     //   console.log(option);
-//     // }
-//   },
-//   );
-// }
-
 
 </script>
 
@@ -137,7 +123,7 @@ function updateFilteredProducts(type = '') {
   <div class="bg-white">
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Children Category -->
-      <div class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8" v-if="childrenCategory.length">
+      <!-- <div class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8" v-if="childrenCategory.length">
         <h2 class="text-4xl font-bold tracking-tight text-gray-900">{{ category.name }}</h2>
         
         <div class="mt-6 space-y-12 lg:grid lg:grid-cols-4 lg:gap-x-6 lg:space-y-0">
@@ -146,20 +132,24 @@ function updateFilteredProducts(type = '') {
               <img v-if="category.images.length" :src="category.images[0]" class="h-full w-full object-cover object-center">
             </div>
             <h3 class="text-base font-bold text-gray-900 mt-3">
-              <Link :href="route('customer.category.index', category.slug)">
+              <a href="#" @click="filterByCategory(category.slug)">
                 <span class="absolute inset-0"></span>
                 {{ category.name }}
-              </Link>
+              </a>
             </h3>
           </div>
         </div>
-      </div>
+      </div> -->
+
+      <!-- <hr> -->
       
       <!-- Filters -->
       <div class="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-12">
-        <div class="flex">
+        <div class="flex items-center">
           <h1 class="text-base font-semibold text-gray-500">{{ countProducts }} results</h1>
-          <!-- <a href="" v-for=""></a> -->
+          <Link :href="route('customer.category.index', categorySlug)" class="ml-2 text-sm font-medium text-indigo-600 hover:text-indigo-500">
+            Clear filters
+          </Link>
         </div>
 
         <div class="flex items-center">
@@ -175,7 +165,7 @@ function updateFilteredProducts(type = '') {
               <MenuItems class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div class="py-1">
                   <MenuItem v-for="option in sortOptions" :key="option.name" v-slot="{ active }">
-                    <button @click="updateFilteredProducts(option.type)" :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-3 w-full py-2 text-sm']">
+                    <button @click="updateSort(option.type)" :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-3 w-full py-2 text-sm']">
                       {{ option.name }}
                     </button>
                   </MenuItem>

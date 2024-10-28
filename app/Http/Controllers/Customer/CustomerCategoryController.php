@@ -39,9 +39,9 @@ class CustomerCategoryController extends Controller
         $brands = $this->brandService->getBrandsByProducts($allProducts);
         $childrenCategory = $this->categoryService->getCategoriesByIds($categoryIds);
         $this->getAllImagesByCollection($childrenCategory, 'category_images');
-
-        // $queries = $request->query();
-        // dd($queries);
+        
+        $queryStrings = $request->query();
+        // dd($queryStrings);
         $countProducts = $products->count();
         /* intval(): Chuyển thành số nguyên */
         $price = $this->categoryService->getProductPriceMinMaxByCategory($category);
@@ -55,6 +55,7 @@ class CustomerCategoryController extends Controller
             'countProducts' => $countProducts,
             'priceMin' => $priceMin,
             'priceMax' => $priceMax,
+            'queryStrings' => $queryStrings
         ]);
     }
 }

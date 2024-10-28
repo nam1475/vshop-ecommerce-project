@@ -8,16 +8,16 @@ use App\Http\Controllers\Customer\Auth\ProviderAuthController;
 use App\Http\Controllers\Customer\Auth\NewPasswordController;
 use App\Http\Controllers\Customer\Auth\PasswordController;
 use App\Http\Controllers\Customer\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Customer\Auth\RegisteredUserController;
+use App\Http\Controllers\Customer\Auth\RegisteredController;
 use App\Http\Controllers\Customer\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 /* Guest: Chưa đăng nhập */
 Route::middleware('guest:customer')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
+    Route::get('register', [RegisteredController::class, 'create'])
                 ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', [RegisteredController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');

@@ -15,21 +15,30 @@ const props = defineProps({
 const customer = usePage().props.auth.customer;
 
 const store = useStore();
-// const selectedProvince = computed(() => store.getters['location/selectedProvince']);
-// const selectedDistrict = computed(() => store.getters['location/selectedDistrict']);
-// const selectedWard = computed(() => store.getters['location/selectedWard']);
 
 function findAddressById(addressId){
     // return props.customerAddresses.find((address) => address.id == addressId);
     return formEditAddress.value.find((address) => address.id == addressId);
 }
 
-// const provinceName = computed(() => store.getters['location/provinceName']);
-// function getProvinceName(code){
-//     store.dispatch('location/getProvinceName', code);
-//     const provinceName = computed(() => store.getters['location/provinceName']);
-//     return provinceName.value;
-// }
+const provinces = computed(() => store.getters['location/provinces']);
+const districts = computed(() => store.getters['location/districts']);
+const wards = computed(() => store.getters['location/wards']);
+
+function getProvinceNameByCode(){
+    // console.log(provinces.value);
+    // const asd = provinces.value.find((p) => p.code == 1);
+    // return asd.name;
+}
+
+function fetchProvinces() {
+  store.dispatch('location/fetchProvinces');
+}
+
+onMounted(() => {
+    fetchProvinces();
+});
+
 
 const formAddAddress = useForm({
     name: customer.name || '',
@@ -56,6 +65,7 @@ function addAddress(){
 const formEditAddress = computed(() => props.customerAddresses);
 function updateAddress(addressId){
     const address = findAddressById(addressId);
+    console.log(address);
     router.patch(route('customer.account.address.update', addressId), address, {
         onSuccess: (page) => {
             success(page);  
@@ -106,7 +116,7 @@ function deleteAddress(addressId){
                             <label for="website-admin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                 Phone 
                             </label>
-                            <input v-model="formAddAddress.phone" type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Phone">
+                            <input v-model="formAddAddress.phone" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Phone">
                             <InputError :message="formAddAddress.errors.phone" />
                         </div>
 
@@ -124,6 +134,7 @@ function deleteAddress(addressId){
                             v-model:selectedWard="formAddAddress.ward"
                             :errors="formAddAddress.errors"
                         />
+
                         <!-- <Location 
                             :selectedProvince="formAddAddress.province" 
                             :selectedDistrict="formAddAddress.district" 
@@ -164,7 +175,7 @@ function deleteAddress(addressId){
                         </span>
                     </h3>
                     <p class="text-gray-700">{{ ca.phone }}</p>
-                    <!-- <p class="text-gray-700">{{ ca.address }}, {{ ca.ward }}, {{ ca.district }}, {{ getProvinceName(ca.province) }} </p> -->
+                    <!-- <p class="text-gray-700">{{ ca.address }}, {{ ca.ward }}, {{ ca.district }}, {{ getProvinceNameByCode() }}     </p> -->
                     <p class="text-gray-700">{{ ca.address }}, {{ ca.ward }}, {{ ca.district }}, {{ ca.province }} </p>
                 </div>
 
@@ -193,14 +204,21 @@ function deleteAddress(addressId){
                                     <input v-model="ca.address" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Address">
                                 </div>
 
-                                <Location 
+                                <!-- <Location 
+                                    v-model:selectedProvince="ca.province" 
+                                    v-model:selectedDistrict="ca.district" 
+                                    v-model:selectedWard="ca.ward"
+                                    :errors="ca.errors"
+                                /> -->
+
+                                <!-- <Location 
                                     :selectedProvince="ca.province" 
                                     :selectedDistrict="ca.district" 
                                     :selectedWard="ca.ward"
                                     @update:selectedProvince="ca.province = $event"
                                     @update:selectedDistrict="ca.district = $event"
                                     @update:selectedWard="ca.ward = $event"
-                                />
+                                /> -->
 
                                 <div class="col-span-2">    
                                     <input :id="`is-main-${ca.id}`" type="checkbox" true-value="1" false-value="0" v-model="ca.is_main" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">

@@ -12,8 +12,8 @@ use App\Traits\Images;
 class CustomerProductController extends Controller
 {
     use Images;
-    protected $productService, $images;
-
+    
+    protected $productService;
     public function __construct(CustomerProductService $productService)
     {
         $this->productService = $productService;
@@ -22,9 +22,11 @@ class CustomerProductController extends Controller
     public function details($slug)
     {
         $product = new ProductResource($this->productService->getProductBySlug($slug));
+        $parentCategory = $this->productService->getParentCategoryByProduct($product);
         
         return Inertia::render('Customer/Product/Details', [
             'product' => $product,
+            'parentCategory' => $parentCategory
         ]);
     }
 }

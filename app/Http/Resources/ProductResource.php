@@ -24,9 +24,6 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'quantity' => $this->quantity,
             'status' => $this->status,
-            // 'images' => $this->whenLoaded('images', function () {
-            //     return ProductImageResource::collection($this->images);
-            // }),
             'images' => $this->getMedia('product_images')->map(function ($mediaItem) {
                 return $mediaItem->getUrl();
             }),

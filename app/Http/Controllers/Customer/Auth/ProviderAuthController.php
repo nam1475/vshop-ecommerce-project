@@ -20,7 +20,7 @@ class ProviderAuthController extends Controller
     public function callback($provider)
     {
         try{
-            DB::beginTransaction();
+            // DB::beginTransaction();
             $socialCustomer = Socialite::driver($provider)->user();
 
             $isExistEmail = Customer::where('email', $socialCustomer->email)->exists();
@@ -54,15 +54,15 @@ class ProviderAuthController extends Controller
                     'email_verified_at' => now(),
                     'remember_token' => Str::random(60),
                 ]);
-
+                
                 Auth::guard('customer')->login($customer);
                 return redirect()->route('home');
             }
-
-            DB::commit();
+            
+            // DB::commit();
             // return redirect()->route('home');
         } catch (\Exception $e) {
-            DB::rollBack();
+            // DB::rollBack();  
             throw new \Exception($e->getMessage());
         }
         

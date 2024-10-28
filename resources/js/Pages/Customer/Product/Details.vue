@@ -1,12 +1,15 @@
 <script setup>
 import Main from '@/Pages/Customer/Components/Layout/Main.vue'
-import { defineProps, ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import { addToCart } from '@/addToCart.js';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
   product: Object,
+  parentCategory: Object
 });
+
+const productData = computed(() => props.product.data);
 
 const quantity = ref(1);
 
@@ -32,8 +35,8 @@ const quantity = ref(1);
                 <svg class="mx-1 h-4 w-4 text-gray-400 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7" />
                 </svg>
-                <Link :href="route('customer.category.index', product.data.category.slug)" class="ms-1 text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white md:ms-2">
-                  {{ product.data.category.name }}
+                <Link :href="route('customer.category.index', parentCategory.slug)" class="ms-1 text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white md:ms-2">
+                  {{ parentCategory.name }}
                 </Link>
               </div>
             </li>
@@ -43,7 +46,7 @@ const quantity = ref(1);
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7" />
                 </svg>
                 <span class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ms-2">
-                  {{ product.data.name }}
+                  {{ productData.name }}
                 </span>
               </div>
             </li>
@@ -53,20 +56,20 @@ const quantity = ref(1);
       <!-- Product details -->
       <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
         <div class="shrink-0 max-w-md lg:max-w-lg mx-auto">
-          <img class="w-full dark:hidden" :src="product.data.images[0]" />
+          <img class="w-full dark:hidden" :src="productData.images[0]" />
         </div>
 
         <div class="mt-6 sm:mt-8 lg:mt-0">
           <h1
             class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"
           >
-            {{ product.data.name }}
+            {{ productData.name }}
           </h1>
           <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
             <p
               class="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white"
             >
-              ${{ product.data.price }}
+              ${{ productData.price }}
             </p>
 
             <div class="flex items-center gap-2 mt-2 sm:mt-0">
@@ -153,7 +156,7 @@ const quantity = ref(1);
 
           <div class="mt-6 sm:gap-4 sm:flex sm:mt-8">
             
-            <form class="max-w-xs flex gap-6" @submit.prevent="addToCart(product.data.id, quantity)">
+            <form class="max-w-xs flex gap-6" @submit.prevent="addToCart(productData.id, quantity)">
               <div class="relative flex items-center max-w-[8rem]">
                   <button type="button" id="decrement-button" @click.prevent="--quantity" :disabled="quantity == 1" :class="quantity == 1 ? 'cursor-not-allowed' : ''" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                       <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
@@ -200,7 +203,7 @@ const quantity = ref(1);
           <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
           
           <p class="mb-6 text-gray-500 dark:text-gray-400">
-            {{ product.data.description }}
+            {{ productData.description }}
           </p>
         </div>
       </div>

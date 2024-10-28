@@ -41,7 +41,7 @@ class Product extends Model implements HasMedia
     // {
     //     return $this->hasMany(ProductImage::class);
     // }
-
+    
     // public function images()
     // {
     //     return $this->getMedia('product_images')->map(function ($mediaItem) {
@@ -61,20 +61,20 @@ class Product extends Model implements HasMedia
         return $this->hasMany(CartItem::class);
     }
 
-    public function scopeFiltered(Builder $query)  {
-        return $query
-        ->when(request('brands'), function (Builder $q)  {
-            $q->whereIn('brand_id',request('brands'));
-        })
-        ->when(request('categories'), function (Builder $q)  {
-            $q->whereIn('category_id',request('categories'));
-        })
-        ->when(request('prices'), function(Builder $q)  {
-            $q->whereBetween('price',[
-                request('prices.from',0),
-                request('prices.to', 100000),
-            ]);
-        });
+    // public function scopeFiltered(Builder $query)  {
+    //     return $query
+    //     ->when(request('brands'), function (Builder $q)  {
+    //         $q->whereIn('brand_id',request('brands'));
+    //     })
+    //     ->when(request('categories'), function (Builder $q)  {
+    //         $q->whereIn('category_id',request('categories'));
+    //     })
+    //     ->when(request('prices'), function(Builder $q)  {
+    //         $q->whereBetween('price',[
+    //             request('prices.from',0),
+    //             request('prices.to', 100000),
+    //         ]);
+    //     });
         
-    }
+    // }
 }

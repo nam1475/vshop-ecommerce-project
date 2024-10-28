@@ -66,7 +66,7 @@ class AdminProductController extends Controller
     public function edit($id){
         $product = $this->productService->getProductById($id);
         $images = $this->getImagesByModel($product, 'product_images');
-
+        
         return Inertia::render('Admin/Product/Edit', [
             'product' => $this->productService->getProductById($id),
             'categories' => $this->categoryService->getCategories()->get(),

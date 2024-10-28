@@ -11,6 +11,11 @@ class CustomerProductService
     {
         return Product::with('category')->where('slug', $slug)->first();
     }
+
+    public function getParentCategoryByProduct($product)
+    {
+        return Category::find($product->category->parent_id);
+    }
     
     public function getProductIdsByCategory($category)
     {

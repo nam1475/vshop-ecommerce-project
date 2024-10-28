@@ -3,7 +3,6 @@
 namespace App\Http\Services\Admin;
 
 use App\Models\Product;
-use App\Models\ProductImage;
 use Illuminate\Support\Facades\DB;
 use App\Traits\HelperTrait;
 use App\Traits\Filterable;
@@ -23,13 +22,12 @@ class AdminProductService
         if($search = request()->query('search')) {
             $this->scopeSearch($query, $search, Product::class);
         }
-        // return $query->with('category', 'brand', 'images');
         return $query->with('category', 'brand');
     }
     
     public function getProductById($id)
     {
-        return Product::with('category', 'brand', 'images')->find($id);
+        return Product::with('category', 'brand')->find($id);
     }
     
     public function store($request)
