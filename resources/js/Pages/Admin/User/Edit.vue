@@ -5,11 +5,13 @@ import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import InputError from '@/Components/InputError.vue';
 import SelectMultiple from '@/Pages/Admin/Components/SelectMultiple.vue';
 import { defineProps } from 'vue';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
     user: Object,
     roles: Array,
-    userHasRoles: Array
+    userHasRoles: Array,
+    title: String
 });
 
 const form = useForm({
@@ -31,6 +33,7 @@ function updateUser() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Add New User" :action="updateUser">
   <div class="grid gap-4 mb-4 grid-cols-2">
     <div class="col-span-1">

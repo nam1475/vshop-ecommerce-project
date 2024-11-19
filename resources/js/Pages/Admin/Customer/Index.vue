@@ -3,14 +3,17 @@ import { defineProps } from 'vue';
 import Table from "@/Pages/Admin/Components/Table.vue";
 import SingleCustomer from "@/Pages/Admin/Customer/Single.vue";
 import CheckboxAll from "@/Pages/Admin/Components/CheckboxAll.vue";
+import { Head } from '@inertiajs/vue3';
 
 defineProps({
-    customers: Object
+  customers: Object,
+  title: String
 });
 
 </script>
 
 <template>
+<Head :title="title" />
 <Table :links="customers.links" :canAdd="false" :canFilter="false">
     <template #tableHeader>
       <tr>

@@ -1,15 +1,18 @@
 <script setup>
 import { defineProps } from 'vue';
 import Main from '@/Pages/Admin/Components/Layout/Main.vue';
+import { Head } from '@inertiajs/vue3';
 
 defineProps({
     customer: Object,
-    customerAddresses: Array
+    customerAddresses: Array,
+    title: String
 });
 
 </script>
 
 <template>
+<Head :title="title" />
 <Main>
     <section class="bg-white dark:bg-gray-900">
         <div class="py-6 px-4 mx-auto max-w-2xl">

@@ -1,5 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 const modules = [
   { 
@@ -51,6 +52,12 @@ const modules = [
     route: 'admin.profile.index'
   },
 ];
+
+/* Kiểm tra xem đang ở route nào thì active */
+function isActive(routeName){
+  return route().current(routeName);
+}
+
 </script>
 
 <template>
@@ -61,7 +68,7 @@ const modules = [
     >
       <div class="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-gray-800">
         <ul class="space-y-2">
-          <li v-for="module in modules" :key="module.name">
+          <li v-for="(module) in modules" :key="module.name">
             <!-- <Link
               v-if="!module.dropDown"
               :href="route(module.route)"
@@ -70,6 +77,7 @@ const modules = [
             <Link
               :href="route(module.route)"
               class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              :class="{ 'bg-gray-200': isActive(module.route) }"
             >
               <svg
                 aria-hidden="true"

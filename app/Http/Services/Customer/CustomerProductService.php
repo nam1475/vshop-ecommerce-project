@@ -12,6 +12,11 @@ class CustomerProductService
         return Product::with('category')->where('slug', $slug)->first();
     }
 
+    public function getProductsWithPagination()
+    {
+        return Product::paginate(8);
+    }
+
     public function getParentCategoryByProduct($product)
     {
         return Category::find($product->category->parent_id);

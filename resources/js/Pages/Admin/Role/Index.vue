@@ -3,15 +3,17 @@ import SingleRole from '@/Pages/Admin/Role/Single.vue';
 import Table from '@/Pages/Admin/Components/Table.vue';
 import { defineProps, ref } from 'vue';
 import CheckboxAll from '@/Pages/Admin/Components/CheckboxAll.vue';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   roles: Object,
+  title: String
 });
-
 
 </script>
 
 <template>
+<Head :title="title" />
 <Table routeName="admin.role" :links="roles.links">
     <template #tableHeader>
       <tr>

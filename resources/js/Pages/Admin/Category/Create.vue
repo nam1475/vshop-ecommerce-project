@@ -7,10 +7,12 @@ import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import { Plus } from "@element-plus/icons-vue";
 import InputError from '@/Components/InputError.vue';
+import { Head } from '@inertiajs/vue3';
 
 
 defineProps({
-  categories: Array
+  categories: Array,
+  title: String
 });
 
 const form = useForm({
@@ -53,6 +55,7 @@ function addCategory() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Add New Category" :action="addCategory">
   <div class="grid gap-4 mb-4 grid-cols-3">
     <div class="col-span-1">

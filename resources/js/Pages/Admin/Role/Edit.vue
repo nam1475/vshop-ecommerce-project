@@ -5,11 +5,13 @@ import { defineProps, ref, watch } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { success, error } from "@/alert.js";
 import SelectMultiple from '@/Pages/Admin/Components/SelectMultiple.vue';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   role: Object,
   roleHasPermissions: Array,
   permissions: Array,
+  title: String
 });
 
 const form = useForm({
@@ -31,6 +33,7 @@ function editRole() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Edit role" :action="editRole">
   <div class="max-w-sm">
     <div class="mb-5">

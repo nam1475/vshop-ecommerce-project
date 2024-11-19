@@ -4,14 +4,17 @@ import { defineProps, ref } from 'vue';
 import SingleBrand from '@/Pages/Admin/Brand/Single.vue';
 import CheckboxAll from '@/Pages/Admin/Components/CheckboxAll.vue';
 import { useStore } from 'vuex';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   brands: Object,
+  title: String
 });
 
 </script>
 
 <template>
+<Head :title="title" />
 <Table routeName="admin.brand" :links="brands.links" :canFilter="false">
   <template #tableHeader>
     <tr>

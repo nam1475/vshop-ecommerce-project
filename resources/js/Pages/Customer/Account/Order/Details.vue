@@ -1,11 +1,12 @@
 <script setup>
 import OrderDetailLayout from '@/Layouts/OrderDetailLayout.vue';
 import Index from '@/Pages/Customer/Account/Index.vue'
-import { router } from '@inertiajs/vue3';
+import { router, Head } from '@inertiajs/vue3';
 import { defineProps, reactive } from 'vue'
 
 const props = defineProps({
-    order: Object
+    order: Object,
+    title: String
 });
 
 const orderData = props.order.data;
@@ -30,6 +31,8 @@ function payOrder() {
 
 <template>
 <Index>
+    <Head :title="title" />
+    
     <OrderDetailLayout :orderData="orderData" >
         <template #payOrderButton>
             <div class="gap-4 sm:flex sm:items-center">

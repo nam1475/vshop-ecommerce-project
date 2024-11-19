@@ -50,7 +50,8 @@ class CustomerAccountController extends Controller
     {
         // dd($this->customerAccountService->getOrders());
         return Inertia::render('Customer/Account/Order/Index', [
-            'orders' => $this->customerAccountService->getOrders($request)
+            'orders' => $this->customerAccountService->getOrders($request),
+            'title' => 'Order History',
         ]);
     }
 
@@ -66,14 +67,16 @@ class CustomerAccountController extends Controller
     public function orderDetails($orderId)
     {
         return Inertia::render('Customer/Account/Order/Details', [
-            'order' => $this->getOrder($orderId)
+            'order' => $this->getOrder($orderId),
+            'title' => 'Order Details',
         ]);
     }
 
     public function address()
     {
         return Inertia::render('Customer/Account/Address', [
-            'customerAddresses' => $this->customerAccountService->getCustomerAddresses()
+            'customerAddresses' => $this->customerAccountService->getCustomerAddresses(),
+            'title' => 'Delivery Address',
         ]);
     }
 

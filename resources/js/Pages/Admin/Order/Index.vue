@@ -3,10 +3,12 @@ import { defineProps, reactive } from 'vue';
 import Table from "@/Pages/Admin/Components/Table.vue";
 import SingleOrder from "@/Pages/Admin/Order/Single.vue";
 import CheckboxAll from "@/Pages/Admin/Components/CheckboxAll.vue";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   orders: Object,
-  statuses: Array
+  statuses: Array,
+  title: String
 });
 
 const data = reactive([
@@ -18,6 +20,7 @@ const data = reactive([
 </script>
 
 <template>
+<Head :title="title" />
 <Table :links="orders.meta.links" :canAdd="false" routeName="admin.order" :filterOptions="data">
     <template #tableHeader>
       <tr>

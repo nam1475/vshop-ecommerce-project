@@ -1,11 +1,12 @@
 <script setup>
-import { Link, usePage, router, useForm } from '@inertiajs/vue3';
+import { Link, usePage, router, useForm, Head } from '@inertiajs/vue3';
 import Main from '@/Pages/Customer/Components/Layout/Main.vue';
 import { watch, computed, reactive, defineProps } from 'vue';
 import { success, error } from '@/alert.js';
 
 const props = defineProps({
   customerMainAddress: Object,
+  title: String
 });
 
 const cart = computed(() => usePage().props.cart.data);
@@ -60,13 +61,12 @@ function removeCartItem(productId){
 }
 
 const formAddress = reactive({
-  address: '',
-  city: '',
-  state: '',
+  name: '',
   phone: '',
-  zip_code: '',
-  country_code: '',
-  type: '',
+  address: '',
+  province: '',
+  district: '',
+  ward: '',
 });
 
 if(props.customerMainAddress){
@@ -83,13 +83,15 @@ function checkout(){
     products: products.value,
     totalPrice: cartTotal.value,
     address: formAddress,
-  });
+  },
+  );
 }
 
 </script>
 
 <template>
 <Main>
+<Head :title="title" />
 <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Shopping Cart</h2>
@@ -127,6 +129,7 @@ function checkout(){
                   <input type="text" id="counter-input" data-input-counter class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white" placeholder="" 
                     :value="getQuantity(product.id)" 
                     required
+                    disabled
                   />
                   
                   <button type="button" id="increment-button" @click.prevent="updateCartItem(product.id, getQuantity(product.id) + 1)" data-input-counter-increment="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
@@ -195,14 +198,6 @@ function checkout(){
                             <label for="ward" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ward</label>
                             <input type="text" v-model="formAddress.ward" name="ward" id="ward" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="State" required="">
                         </div>
-                        <div class="col-span-1">
-                            <label for="zip-code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Zip Code</label>
-                            <input type="number" v-model="formAddress.zip_code" name="zipCode" id="zip-code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Zip Code" required="">
-                        </div>
-                        <div class="col-span-1">
-                            <label for="country-code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Country Code</label>
-                            <input type="number" v-model="formAddress.country_code" name="countryCode" id="country-code" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Country Code" required="">
-                        </div>
                           
                     </div>
                     <!-- <button type="submit" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
@@ -218,7 +213,7 @@ function checkout(){
           <p class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</p>
 
           <div class="space-y-4">
-            <div class="space-y-2">
+            <!-- <div class="space-y-2">
               <dl class="flex items-center justify-between gap-4">
                 <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Original price</dt>
                 <dd class="text-base font-medium text-gray-900 dark:text-white">$7,592.00</dd>
@@ -238,7 +233,7 @@ function checkout(){
                 <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Tax</dt>
                 <dd class="text-base font-medium text-gray-900 dark:text-white">$799</dd>
               </dl>
-            </div>
+            </div> -->
 
             <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
               <dt class="text-base font-bold text-gray-900 dark:text-white">Total</dt>
@@ -246,7 +241,7 @@ function checkout(){
             </dl>
           </div>
 
-          <form @submit.prevent="checkout">
+          <form @submit.prevent="checkout()">
             <button type="submit" :disabled="!cart.count" :class="{ 'cursor-not-allowed': !cart.count }" class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
               Proceed to Checkout
             </button>
@@ -263,15 +258,34 @@ function checkout(){
           </div>
         </div>
 
-        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-          <form class="space-y-4">
+        <!-- <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6"> -->
+          <!-- <form class="space-y-4">
             <div>
               <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"> Do you have a voucher or gift card? </label>
               <input type="text" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500" placeholder="" required />
             </div>
             <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Apply Code</button>
-          </form>
-        </div>
+          </form> -->
+
+          <!-- Payment method -->
+          <!-- <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+              <h2 class="text-lg font-semibold text-gray-800 mb-4">Payment method</h2>
+              <div class="border border-gray-300 rounded-lg divide-y divide-gray-300">
+                  <label class="flex items-center p-4 cursor-pointer">
+                      <input type="radio" name="payment" class="form-radio text-blue-600 focus:ring-blue-500 focus:outline-none" />
+                      <span class="ml-3 text-gray-700">Payment Delivery</span>
+                  </label>
+                  <label class="flex items-center p-4 cursor-pointer">
+                      <input type="radio" name="payment" class="form-radio text-blue-600 focus:ring-blue-500 focus:outline-none" checked />
+                      <span class="ml-3 text-gray-700">Card Payment</span>
+                  </label>
+                  <label class="flex items-center p-4 cursor-pointer">
+                      <input type="radio" name="payment" class="form-radio text-blue-600 focus:ring-blue-500 focus:outline-none" />
+                      <span class="ml-3 text-gray-700">PayPal Payment</span>
+                  </label>
+              </div>
+          </div> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>

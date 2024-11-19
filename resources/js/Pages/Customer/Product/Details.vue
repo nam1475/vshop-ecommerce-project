@@ -153,10 +153,22 @@ const quantity = ref(1);
               </a>
             </div>
           </div>
+          
+          <ul class="grid gap-y-4 my-8">
+            <li class="flex items-center gap-3">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <rect width="26" height="26" rx="13" fill="#4F46E5" />
+                    <path
+                        d="M7.66669 12.629L10.4289 15.3913C10.8734 15.8357 11.0956 16.0579 11.3718 16.0579C11.6479 16.0579 11.8701 15.8357 12.3146 15.3913L18.334 9.37183"
+                        stroke="white" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                <span class="font-normal text-base text-gray-900 ">Remaining stock: {{ productData.quantity }}</span>
+            </li>
+          </ul>
 
           <div class="mt-6 sm:gap-4 sm:flex sm:mt-8">
-            
-            <form class="max-w-xs flex gap-6" @submit.prevent="addToCart(productData.id, quantity)">
+            <form v-if="productData.in_stock" class="max-w-xs flex gap-6" @submit.prevent="addToCart(productData.id, quantity)">
               <div class="relative flex items-center max-w-[8rem]">
                   <button type="button" id="decrement-button" @click.prevent="--quantity" :disabled="quantity == 1" :class="quantity == 1 ? 'cursor-not-allowed' : ''" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                       <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
@@ -164,9 +176,9 @@ const quantity = ref(1);
                       </svg>
                   </button>
                   <input type="text" id="quantity-input" data-input-counter data-input-counter-min="1" data-input-counter-max="50" aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                    :value="quantity" required  
+                    :value="quantity" required disabled  
                   />
-                  <button type="button" id="increment-button" @click.prevent="++quantity" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                  <button type="button" id="increment-button" @click.prevent="++quantity" :disabled="quantity == productData.quantity" :class="quantity == productData.quantity ? 'cursor-not-allowed' : ''" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
                       <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
                       </svg>
@@ -198,6 +210,12 @@ const quantity = ref(1);
                 Add to cart
               </button>
             </form>
+
+            <div v-else>
+              <p class="text-gray-500 dark:text-gray-400">
+                Out of stock
+              </p>
+            </div>
           </div>
 
           <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />

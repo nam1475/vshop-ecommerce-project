@@ -21,12 +21,15 @@ class AdminBrandController extends Controller
     {
         return Inertia::render('Admin/Brand/Index', [
             'brands' => $this->brandService->getBrands(),
+            'title' => 'Admin Brands',
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Admin/Brand/Create');
+        return Inertia::render('Admin/Brand/Create', [
+            'title' => 'Admin Brand Create',
+        ]);
     }
 
     public function store(AdminBrandRequest $request)
@@ -42,6 +45,7 @@ class AdminBrandController extends Controller
     {
         return Inertia::render('Admin/Brand/Edit', [
             'brand' => $this->brandService->getBrandById($id),
+            'title' => 'Admin Brand Edit',
         ]);
     }
 

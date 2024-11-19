@@ -19,7 +19,8 @@ class AdminCustomerController extends Controller
     public function index()
     {
         return Inertia::render('Admin/Customer/Index', [
-            'customers' => Customer::paginate(10)
+            'customers' => Customer::paginate(10),
+            'title' => 'Admin Customers',
         ]);
     }
 
@@ -28,6 +29,7 @@ class AdminCustomerController extends Controller
         return Inertia::render('Admin/Customer/Edit', [
             'customer' => $this->adminCustomerService->getCustomerById($id),
             'customerAddresses' => $this->adminCustomerService->getCustomerAddresses($id),
+            'title' => 'Admin Customer Edit',
         ]);
     }
 

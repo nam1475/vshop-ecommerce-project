@@ -15,7 +15,7 @@ class AdminProductService
 
     public function getProducts()
     {
-        $query = Product::query();
+        $query = Product::query()->withoutGlobalScope('published');
         if($filters = request()->query('filter', [])) { 
             $this->scopeFilters($query, $filters, Product::class); 
         }
@@ -27,7 +27,7 @@ class AdminProductService
     
     public function getProductById($id)
     {
-        return Product::with('category', 'brand')->find($id);
+        return Product::with('category', 'brand')->withoutGlobalScope('published')->find($id);
     }
     
     public function store($request)
@@ -73,7 +73,7 @@ class AdminProductService
                 $this->deleteRows($request, Product::class);
                 return true;
             }
-            $product = Product::find($id);
+            $product = Product::withoutGlobalScope('published')->find($id);
             $result = $product->delete();
             return $result;
         }catch(\Exception $e){

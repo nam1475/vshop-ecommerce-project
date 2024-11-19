@@ -22,7 +22,9 @@ class RegisteredController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('Customer/Auth/Register');
+        return Inertia::render('Customer/Auth/Register', [
+            'title' => 'Register',
+        ]);
     }
 
     public function store(RegisterRequest $request): RedirectResponse

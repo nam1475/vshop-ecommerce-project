@@ -28,6 +28,7 @@ class CustomerCartController extends Controller
     {
         return Inertia::render('Customer/Cart/Index', [
             'customerMainAddress' => $this->addressService->getCustomerMainAddress(),
+            'title' => 'Cart',
         ]);
     }
 

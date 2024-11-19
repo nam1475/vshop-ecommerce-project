@@ -4,6 +4,7 @@ import { router, Link } from '@inertiajs/vue3';
 import { success, error, warning } from '@/alert.js';
 import { useStore } from 'vuex';
 import CheckboxChildren from "../Components/CheckboxChildren.vue";
+import Active from "../Components/Active.vue";
 
 const props = defineProps({
   product: Object,
@@ -83,35 +84,12 @@ function deleteProduct(id){
     </td>
     <td class="px-4 py-3">{{ product.price }}</td>
     <td class="px-4 py-3">{{ product.quantity }}</td>
-    <td class="px-4 py-3" v-if="product.in_stock">
-      <span
-        class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-      >
-        In stock
-      </span>
+    <td class="px-4 py-3">
+      <Active :active="product.in_stock"/>
     </td>
-    <td class="px-4 py-3" v-else>
-      <span
-        class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
-      >
-        Out of stock
-      </span>
+    <td class="px-4 py-3">
+      <Active :active="product.published"/>
     </td>
-    <td class="px-4 py-3" v-if="product.published">
-      <span
-        class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
-      >
-        Published
-      </span>
-    </td>
-    <td class="px-4 py-3" v-else>
-      <span
-        class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
-      >
-        Unpublished
-      </span>
-    </td>
-    <td class="px-4 py-3">{{ product.created_at }}</td>
     <td class="px-4 py-3 flex items-center justify-end">
       <button
         :id="`${product.id}-button`"

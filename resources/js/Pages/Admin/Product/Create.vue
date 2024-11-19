@@ -8,10 +8,12 @@ import { success, error } from "@/alert.js";
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
 import InputError from '@/Components/InputError.vue';
+import { Head } from '@inertiajs/vue3';
 
 defineProps({
   categories: Array,
   brands: Array,
+  title: String
 });
 
 const page = usePage();
@@ -21,7 +23,6 @@ const form = useForm({
   category_id: "",
   brand_id: "",
   quantity: 0,
-  in_stock: 1,
   published: 1,
   price: 0,
   description: "",  
@@ -61,6 +62,7 @@ function addProduct() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Add New Product" :action="addProduct">
   <div class="grid gap-4 mb-4 grid-cols-3">
     <div class="col-span-1">
@@ -172,41 +174,6 @@ function addProduct() {
       <InputError :message="form.errors.published" />
     </div>
 
-    <div class="col-span-1">
-      <label
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >In stock</label
-      >
-      <div>
-        <input
-          type="radio"
-          id="in-stock"
-          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          value="1"
-          v-model="form.in_stock"
-        />
-        <label
-          for="in-stock"
-          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Yes</label
-        >
-      </div>
-      <div>
-        <input
-          type="radio"
-          id="out-stock"
-          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          value="0"
-          v-model="form.in_stock"
-        />
-        <label
-          for="out-stock"
-          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >No</label
-        >
-      </div>
-      <InputError :message="form.errors.in_stock" />
-    </div>
     <div class="col-span-1">
       <label
         for="quantity"

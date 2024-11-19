@@ -27,9 +27,16 @@ defineProps({
           <h3 class="mt-4 text-sm text-gray-700">{{ product.name }}</h3>
           <div class="flex items-center justify-between mt-3">
             <p class="mt-1 text-lg font-medium text-gray-900">${{ product.price }}</p>
-            <a @click="addToCart(product.id)" href="#" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+
+            <a v-if="product.in_stock" @click="addToCart(product.id)" href="#" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
               Add to cart
             </a>
+            
+            <div v-else>
+              <p class="text-gray-500 dark:text-gray-400">
+                Out of stock
+              </p>
+            </div>
           </div>    
         </div>
       </div>

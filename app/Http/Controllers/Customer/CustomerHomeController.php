@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Http\Services\Admin\AdminProductService;
 use App\Traits\Images;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Checkout;
@@ -16,6 +15,7 @@ use App\Notifications\Checkout as NotificationsCheckout;
 use App\Notifications\Welcome;
 use Illuminate\Support\Facades\Notification;
 use App\Traits\HelperTrait;
+use App\Http\Services\Customer\CustomerProductService;
 
 class CustomerHomeController extends Controller
 {
@@ -23,23 +23,20 @@ class CustomerHomeController extends Controller
 
     protected $productService;
 
-    public function __construct(AdminProductService $productService)
+    public function __construct(CustomerProductService $productService)
     {
         $this->productService = $productService;
     }
 
     public function home()
     {
-        $products = ProductResource::collection($this->productService->getProducts()->paginate(4));
-        // Mail::send(new Checkout());
-        // $customer = auth('customer')->user();
-        // $order = $this->getOrder(23)->resource;
-        // Notification::send($customer, new NotificationsCheckout($order)); 
-
+        $products = ProductResource::collection($this->productService->getProductsWithPagination());
+        
         return Inertia::render('Customer/Home', [
             'products' => $products,
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
+            'title' => 'Home',
         ]);
     }
 }

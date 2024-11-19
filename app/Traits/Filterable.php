@@ -25,11 +25,10 @@ trait Filterable
 
                 // Kiểm tra tương tự cho 'category'
                 if (method_exists($model, 'category')) {
-                    $q->whereHas('category', function($q) use ($filters) {
+                    $q->orWhereHas('category', function($q) use ($filters) {
                         $q->whereIn('name', $filters);
                     });
                 }
- 
             });
     }
 }

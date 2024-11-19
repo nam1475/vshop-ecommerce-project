@@ -3,14 +3,17 @@ import { defineProps } from 'vue';
 import Table from "@/Pages/Admin/Components/Table.vue";
 import SingleUser from "@/Pages/Admin/User/Single.vue";
 import CheckboxAll from "@/Pages/Admin/Components/CheckboxAll.vue";
+import { Head } from '@inertiajs/vue3';
 
 defineProps({
-  users: Object
+  users: Object,
+  title: String
 });
 
 </script>
 
 <template>
+<Head :title="title" />
 <Table routeName="admin.user" :links="users.links">
     <template #tableHeader>
       <tr>

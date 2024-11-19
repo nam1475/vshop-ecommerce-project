@@ -4,9 +4,11 @@ import { router } from '@inertiajs/vue3';
 import { defineProps, reactive, ref } from 'vue'
 import { success, error } from '@/alert.js';
 import OrderDetailLayout from '@/Layouts/OrderDetailLayout.vue';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
-    order: Object
+    order: Object,
+    title: String
 });
 
 const orderData = props.order.data;
@@ -61,6 +63,7 @@ function updateStatus(orderId) {
 </script>
 
 <template>
+<Head :title="title" />
 <Main>
     <OrderDetailLayout :orderData="orderData">
         <template #orderStatus>

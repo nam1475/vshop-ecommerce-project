@@ -44,7 +44,11 @@ function deleteOrder(id){
         {{ order.id }}
       </th>
       <td class="px-4 py-3">{{ order.total_price }}</td>
-      <td class="px-4 py-3">{{ order.status }}</td>
+      <td class="px-4 py-3">
+        <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+          {{ order.status }}
+        </span>
+      </td>
       <td class="px-4 py-3">{{ order.created_at }}</td>
       <td class="px-4 py-3 flex items-center justify-end">
         <button

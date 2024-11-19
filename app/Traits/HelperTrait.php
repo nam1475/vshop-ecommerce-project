@@ -33,8 +33,11 @@ trait HelperTrait
     }
 
     public function deleteRows($request, $model){
-        $data = $model::whereIn('id', $request->input('ids'))->get();
-        foreach($data as $item){
+        $items = $model::whereIn('id', $request->input('ids'));
+        if($model == Product::class){
+            $items->withoutGlobalScope('published');
+        }
+        foreach($items->get() as $item){
             $item->delete();
         }
     }

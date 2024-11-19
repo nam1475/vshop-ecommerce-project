@@ -4,13 +4,11 @@ import { computed, defineProps } from 'vue'
 
 const props = defineProps({
     orderData: Object
-});
+});    
 
-console.log(props.orderData);
-    
-const customer = computed(() => usePage().props.auth.customer);
+// const customer = computed(() => usePage().props.auth.customer);
 
-function formatNumber(number) {
+function formatPhoneNumber(number) {
     /* Tách chuỗi thành các nhóm số bằng cách sử dụng regex */
     return number.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
 }
@@ -46,7 +44,7 @@ function getTotalPrice(price, quantity){
                 </div>
 
                 <div class="space-y-4 bg-gray-50 p-6">
-                    <div class="space-y-2">
+                    <!-- <div class="space-y-2">
                         <dl class="flex items-center justify-between gap-4">
                             <dt class="font-normal text-gray-500 dark:text-gray-400">Original price</dt>
                             <dd class="font-medium text-gray-900 dark:text-white">${{ orderData.total_price }}</dd>
@@ -66,7 +64,7 @@ function getTotalPrice(price, quantity){
                         <dt class="font-normal text-gray-500 dark:text-gray-400">Tax</dt>
                         <dd class="font-medium text-gray-900 dark:text-white">$799</dd>
                         </dl>
-                    </div>
+                    </div> -->
 
                     <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
                         <dt class="text-lg font-bold text-gray-900 dark:text-white">Total</dt>
@@ -86,11 +84,7 @@ function getTotalPrice(price, quantity){
                         </dl>
                         <dl class="sm:flex items-center justify-between gap-4">
                             <dt class="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Name</dt>
-                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ orderData.customer_address.customer.name }}</dd>
-                        </dl>
-                        <dl class="sm:flex items-center justify-between gap-4">
-                            <dt class="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Email</dt>
-                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ orderData.customer_address.customer.email }}</dd>
+                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ orderData.customer_address.name }}</dd>
                         </dl>
                         <dl class="sm:flex items-center justify-between gap-4">
                             <dt class="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Address</dt>
@@ -98,7 +92,7 @@ function getTotalPrice(price, quantity){
                         </dl>
                         <dl class="sm:flex items-center justify-between gap-4">
                             <dt class="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Phone</dt>
-                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ formatNumber(customer.phone) }}</dd>
+                            <dd class="font-medium text-gray-900 dark:text-white sm:text-end">{{ formatPhoneNumber(orderData.customer_address.phone) }}</dd>
                         </dl>
                     </div>
 

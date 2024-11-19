@@ -6,12 +6,14 @@ import { success, error, warning } from "@/alert.js";
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import RecursiveSelected from '@/Pages/Admin/Components/RecursiveSelected.vue';
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   product: Object,
   categories: Array,
   brands: Array,
   images: Array,
+  title: String
 });
 
 const form = useForm({
@@ -21,7 +23,6 @@ const form = useForm({
   category_id: props.product.category_id,
   brand_id: props.product.brand_id,
   quantity: props.product.quantity,
-  in_stock: props.product.in_stock,
   published: props.product.published,
   description: props.product.description,
   price: props.product.price,
@@ -65,10 +66,8 @@ function updateProduct() {
   formData.append("description", form.description);
   formData.append("category_id", form.category_id);
   formData.append("brand_id", form.brand_id);
-  formData.append("in_stock", form.in_stock);
   formData.append("published", form.published);
   formData.append("_method", "PUT");
-  // Append product images to the FormData
   for (const image of uploadImages.value) {
     formData.append("product_images[]", image);
   }
@@ -89,6 +88,7 @@ function updateProduct() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Edit Product" :action="updateProduct">
   <div class="grid gap-4 mb-4 grid-cols-3">
     <div class="col-span-1">
@@ -196,43 +196,7 @@ function updateProduct() {
         >
       </div>
     </div>
-
-    <div class="col-span-1">
-      <label
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >In stock</label
-      >
-      <div>
-        <input
-          type="radio"
-          name="in_stock"
-          id="in-stock"
-          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          value="1"
-          v-model="form.in_stock"
-        />
-        <label
-          for="in-stock"
-          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >Yes</label
-        >
-      </div>
-      <div>
-        <input
-          type="radio"
-          name="in_stock"
-          id="out-stock"
-          class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          value="0"
-          v-model="form.in_stock"
-        />
-        <label
-          for="out-stock"
-          class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >No</label
-        >
-      </div>
-    </div>
+    
     <div class="col-span-1">
       <label
         for="quantity"

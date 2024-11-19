@@ -23,7 +23,8 @@ class CustomerOrderController extends Controller
         if($result){
             return Inertia::location($result);
         }
-        return redirect()->back()->with('error', 'Failed to create order.');
+        // return redirect()->back()->with('error', 'Something went wrong. Please try again.');
+        return redirect()->back();
     }
 
     public function success(Request $request)

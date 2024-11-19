@@ -13,11 +13,12 @@ defineProps({
     status: {
         type: String,
     },
+    title: String
 });
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head :title="title" />
     
     <Main>
         <template #header>

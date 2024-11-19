@@ -73,8 +73,8 @@ class CustomerCategoryService
                     $q->orderBy('products.price', $sort);
                 });
         }
-
-        return $query->paginate(4)->withQueryString();
+        
+        return $query->paginate(8)->withQueryString();  
     }
 
     public function getProductPriceMinMaxByCategory($category)

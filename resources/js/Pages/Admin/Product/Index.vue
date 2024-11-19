@@ -4,11 +4,13 @@ import Table from "@/Pages/Admin/Components/Table.vue";
 import SingleProduct from "@/Pages/Admin/Product/Single.vue";
 import { useStore } from "vuex";
 import CheckboxAll from "@/Pages/Admin/Components/CheckboxAll.vue";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   products: Object,
   brands: Array,
   categories: Array,
+  title: String
 });
 
 const data = reactive([
@@ -20,21 +22,13 @@ const data = reactive([
     name: 'Categories',
     values: props.categories
   }
-]); 
-
-// watch(() => props.brands, (newVal) => {
-//   data[0].values = newVal;
-// });
-
-// watch(() => props.categories, (newVal) => {
-//   data[1].values = newVal;
-// });  
+]);
 
 
 </script>
 
 <template>
-  <!-- <Table :links="products.links" :filterOptions="brands" routeName="admin.product"> -->
+<Head :title="title" />
   <Table :links="products.links" :filterOptions="data" routeName="admin.product">
     <template #tableHeader>
       <tr>
@@ -50,7 +44,6 @@ const data = reactive([
         <th scope="col" class="px-4 py-3">Quantity</th>
         <th scope="col" class="px-4 py-3">Stock</th>
         <th scope="col" class="px-4 py-3">Published</th>
-        <th scope="col" class="px-4 py-3">Created at</th>
         <th scope="col" class="px-4 py-3">
           <span class="sr-only">Actions</span>
         </th>

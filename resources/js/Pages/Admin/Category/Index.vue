@@ -3,9 +3,11 @@ import SingleCategory from '@/Pages/Admin/Category/Single.vue';
 import Table from '@/Pages/Admin/Components/Table.vue';
 import { defineProps, ref } from 'vue';
 import CheckboxAll from '@/Pages/Admin/Components/CheckboxAll.vue';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   categories: Object,
+  title: String
 });
 
 function getAllCategories(categories) {
@@ -28,6 +30,7 @@ function getAllCategories(categories) {
 </script>
 
 <template>
+<Head :title="title" />
 <Table routeName="admin.category" :links="categories.links">
     <template #tableHeader>
       <tr>

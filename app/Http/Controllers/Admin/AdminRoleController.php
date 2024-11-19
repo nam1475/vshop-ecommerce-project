@@ -23,6 +23,7 @@ class AdminRoleController extends Controller
     {
         return Inertia::render('Admin/Role/Index', [
             'roles' => Role::with('permissions')->paginate(10),
+            'title' => 'Admin Roles',
         ]);
     }
 
@@ -30,6 +31,7 @@ class AdminRoleController extends Controller
     {
         return Inertia::render('Admin/Role/Create', [
             'permissions' => $this->adminPermissionService->getPermissions(),
+            'title' => 'Admin Role Create',
         ]);
     }
 
@@ -48,6 +50,7 @@ class AdminRoleController extends Controller
             'role' => $this->adminRoleService->getRoleById($id),
             'roleHasPermissions' => $this->adminRoleService->getRoleHasPermissions($id),
             'permissions' => $this->adminPermissionService->getPermissions(),
+            'title' => 'Admin Role Edit',
         ]);
     }
 

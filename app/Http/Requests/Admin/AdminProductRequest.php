@@ -25,10 +25,8 @@ class AdminProductRequest extends FormRequest
             'name' => ['required', 'string'],
             'brand_id' => ['required'],
             'category_id' => ['required'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'in_stock' => ['required'],
+            'price' => ['required', 'numeric', 'min:1'],
             'published' => ['required'],
-            'quantity' => ['required', 'integer', 'min:1'],
             'description' => ['required'],
         ];
     }
@@ -40,11 +38,8 @@ class AdminProductRequest extends FormRequest
             'brand_id.required' => 'Brand is required.',
             'category_id.required' => 'Category is required.',
             'price.required' => 'Price is required.',
-            'price.min' => 'Price must be greater than or equal to 0.',
-            'in_stock.required' => 'In stock is required.',
+            'price.min' => 'Price must be greater than or equal to 1.',
             'published.required' => 'Published is required.',
-            'quantity.required' => 'Quantity is required.',
-            'quantity.min' => 'Quantity must be greater than or equal to 1.',
             'description.required' => 'Description is required.',
         ];
     }

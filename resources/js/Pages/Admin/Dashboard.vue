@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps, onMounted } from "vue";
+import { Head } from "@inertiajs/vue3";
 import Main from "@/Pages/Admin/Components/Layout/Main.vue";
 
 defineProps({
@@ -12,6 +13,7 @@ defineProps({
 
 <template>
   <Main>
+    <Head :title="title" />
     <section class="text-gray-600 mt-10 body-font">
       <div class="container px-5 mx-auto">
         <div class="flex flex-wrap -m-4 text-center">

@@ -10,16 +10,13 @@ class CustomerAddress extends Model
     use HasFactory;
 
     protected $fillable = [
-        'type',
         'name',
-        'phone',
         'address',
         'province',
         'district',
         'ward',
-        'zip_code',
+        'phone',
         'is_main',
-        'country_code',
         'customer_id',
     ];
 

@@ -22,6 +22,7 @@ class AdminProfileController extends Controller
         return Inertia::render('Admin/Profile/Index', [
             // 'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             // 'status' => session('status'),
+            'title' => 'Admin Profile',
         ]);
     }
 

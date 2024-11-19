@@ -36,14 +36,15 @@ class AdminProductController extends Controller
 
     public function index()
     {
-        $products = $this->productService->getProducts()->paginate(3);
+        $products = $this->productService->getProducts()->paginate(10);
         $allProducts = Product::all();
         $brands = $this->brandService->getBrandsByProducts($allProducts);
         $categories = $this->categoryService->getCategoriesByProducts($allProducts);
         return Inertia::render('Admin/Product/Index', [
             'products' => $products,
             'brands' => $brands,
-            'categories' => $categories
+            'categories' => $categories,
+            'title' => 'Admin Products',
         ]);
     }   
 
@@ -51,6 +52,7 @@ class AdminProductController extends Controller
         return Inertia::render('Admin/Product/Create', [
             'categories' => $this->categoryService->getCategories()->get(), 
             'brands' => Brand::all(),
+            'title' => 'Admin Product Create',
         ]);
     }
     
@@ -72,6 +74,7 @@ class AdminProductController extends Controller
             'categories' => $this->categoryService->getCategories()->get(),
             'brands' => Brand::all(),
             'images' => $images,
+            'title' => 'Admin Product Edit',
         ]);
     }
 

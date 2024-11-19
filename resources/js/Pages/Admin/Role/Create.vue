@@ -5,9 +5,11 @@ import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import { ref, defineProps, watch } from "vue";
 import SelectMultiple from '@/Pages/Admin/Components/SelectMultiple.vue';
 import InputError from '@/Components/InputError.vue';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   permissions: Array,
+  title: String
 });
 
 const form = useForm({
@@ -32,6 +34,7 @@ function addRole() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Add New Role" :action="addRole">
   <div class="max-w-sm">
     <div class="mb-5">

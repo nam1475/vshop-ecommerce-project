@@ -29,6 +29,7 @@ class AdminCategoryController extends Controller
     {
         return Inertia::render('Admin/Category/Index', [
             'categories' => $this->adminCategoryService->getCategories()->paginate(1),
+            'title' => 'Admin Categories',
         ]);
     }
 
@@ -36,6 +37,7 @@ class AdminCategoryController extends Controller
     {
         return Inertia::render('Admin/Category/Create', [
             'categories' => $this->adminCategoryService->getCategories()->get(),
+            'title' => 'Admin Category Create',
         ]);
     }
 
@@ -57,6 +59,7 @@ class AdminCategoryController extends Controller
             'category' => $category,
             'categories' => $this->adminCategoryService->getCategories()->get(),
             'image' => $image,
+            'title' => 'Admin Category Edit',
         ]);
     }
 

@@ -55,7 +55,8 @@ class CustomerCategoryController extends Controller
             'countProducts' => $countProducts,
             'priceMin' => $priceMin,
             'priceMax' => $priceMax,
-            'queryStrings' => $queryStrings
+            'queryStrings' => $queryStrings,
+            'title' => $category->name,
         ]);
     }
 }

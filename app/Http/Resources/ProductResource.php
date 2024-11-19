@@ -23,7 +23,8 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'quantity' => $this->quantity,
-            'status' => $this->status,
+            'published' => $this->published,
+            'in_stock' => $this->in_stock,
             'images' => $this->getMedia('product_images')->map(function ($mediaItem) {
                 return $mediaItem->getUrl();
             }),

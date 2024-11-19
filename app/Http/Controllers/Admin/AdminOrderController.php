@@ -25,6 +25,7 @@ class AdminOrderController extends Controller
         return Inertia::render('Admin/Order/Index', [
             'orders' => $this->adminOrderService->getOrders(),
             'statuses' => $this->adminOrderService->getOrderStatuses(),
+            'title' => 'Admin Orders',
         ]);
     }
 
@@ -32,6 +33,7 @@ class AdminOrderController extends Controller
     {
         return Inertia::render('Admin/Order/Edit', [
             'order' => $this->getOrder($id),
+            'title' => 'Admin Order Edit',
         ]);
     }
 
@@ -39,7 +41,7 @@ class AdminOrderController extends Controller
     {
         $result = $this->adminOrderService->update($request, $id);
         if($result){
-            return redirect()->back()->with('success', 'Order updated successfully');
+            return redirect()->route('admin.order.index')->with('success', 'Order updated successfully');
         }
         return redirect()->back()->with('error', 'Order updated failed');
     }

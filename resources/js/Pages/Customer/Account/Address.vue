@@ -1,7 +1,7 @@
 <script setup>
 import {computed, defineProps, onMounted, reactive} from 'vue'
 import Index from '@/Pages/Customer/Account/Index.vue'
-import { usePage, useForm, Link, router } from '@inertiajs/vue3'
+import { usePage, useForm, Link, router, Head } from '@inertiajs/vue3'
 import Modal from '@/Pages/Customer/Components/Modal.vue';
 import { success, error, warning } from '@/alert';
 import Location from '@/Pages/Customer/Account/Location.vue';
@@ -9,7 +9,8 @@ import { useStore } from 'vuex'
 import InputError from '@/Components/InputError.vue';
 
 const props = defineProps({
-    customerAddresses: Array
+    customerAddresses: Array,
+    title: String
 });
 
 const customer = usePage().props.auth.customer;
@@ -96,6 +97,8 @@ function deleteAddress(addressId){
 
 <template>
 <Index>
+    <Head :title="title" />
+
     <div class="max-w-4xl mx-auto p-6 bg-gray-100 rounded-lg">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold">My address</h1>

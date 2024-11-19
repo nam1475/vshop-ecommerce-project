@@ -5,11 +5,13 @@ import { defineProps, ref } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { success, error } from "@/alert.js";
 import { Plus } from "@element-plus/icons-vue";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
   category: Object,
   categories: Array,
   image: Array,
+  title: String
 });
 
 const form = useForm({
@@ -66,6 +68,7 @@ function handleFileUpload(file) {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Edit Category" :action="updateCategory">
   <div class="grid gap-4 mb-4 grid-cols-3">
     <div class="col-span-1">

@@ -23,7 +23,8 @@ class AdminPermissionController extends Controller
     public function index()
     {
         return Inertia::render('Admin/Permission/Index', [
-            'permissions' => Permission::paginate(10)
+            'permissions' => Permission::paginate(10),
+            'title' => 'Admin Permissions'
         ]);
     }
 
@@ -31,7 +32,8 @@ class AdminPermissionController extends Controller
     {
         return Inertia::render('Admin/Permission/Create', [
             'tables' => TableName::cases(),
-            'actions' => ActionName::cases()
+            'actions' => ActionName::cases(),
+            'title' => 'Admin Permission Create'
         ]);
     }
 
@@ -47,7 +49,8 @@ class AdminPermissionController extends Controller
     public function edit($id)
     {
         return Inertia::render('Admin/Permission/Edit', [
-            'permission' => $this->adminPermissionService->getPermissionById($id)
+            'permission' => $this->adminPermissionService->getPermissionById($id),
+            'title' => 'Admin Permission Edit'
         ]);
     }
 

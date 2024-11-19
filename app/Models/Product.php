@@ -9,10 +9,12 @@ use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Traits\InStock;
+use App\Traits\Published;
 
 class Product extends Model implements HasMedia
 {
-    use HasFactory, HasSlug, InteractsWithMedia;
+    use HasFactory, HasSlug, InteractsWithMedia, InStock, Published;
 
     protected $table = 'products';
     protected $fillable = [
@@ -30,13 +32,21 @@ class Product extends Model implements HasMedia
         'deleted_by',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creatingAndUpdatingInStock();
+        static::published();
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
-
+    
     // public function images()
     // {
     //     return $this->hasMany(ProductImage::class);

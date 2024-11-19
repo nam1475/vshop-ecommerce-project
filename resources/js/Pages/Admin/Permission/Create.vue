@@ -6,10 +6,12 @@ import CheckboxAll from '@/Pages/Admin/Components/CheckboxAll.vue';
 import CheckboxChildren from '@/Pages/Admin/Components/CheckboxChildren.vue';
 import InputError from '@/Components/InputError.vue';
 import { useStore } from "vuex";
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
     tables: Array,
     actions: Array,
+    title: String
 });
 
 const actionNames = ref([...props.actions]);
@@ -49,6 +51,7 @@ function updateActions(table) {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Add New Permission" :action="addPermission">
   <div class="max-w-sm">
     <div class="mb-5">

@@ -6,7 +6,7 @@ import {
 } from '@headlessui/vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/vue/20/solid'
-import { Link, useForm, router, usePage } from '@inertiajs/vue3'
+import { Link, useForm, router, usePage, Head } from '@inertiajs/vue3'
 import Main from '@/Pages/Customer/Components/Layout/Main.vue'
 import ProductList from '@/Pages/Customer/Components/ProductList.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
@@ -19,8 +19,10 @@ const props = defineProps({
   countProducts: Number,
   priceMin: Number,
   priceMax: Number,
-  queryStrings: Object
+  queryStrings: Object,
+  title: String
 });
+
 
 const categorySlug = props.category.slug;
 
@@ -76,7 +78,6 @@ const queryCategories = ref(params.getAll('categories[]'));
 //   });
 // }  
 
-
 watch(queryBrands, () => {
   updateFilteredProducts();
 });
@@ -120,6 +121,8 @@ function updateFilteredProducts(type = '') {
 
 <template>
 <Main>
+  <Head :title="title" />
+
   <div class="bg-white">
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Children Category -->
@@ -140,7 +143,7 @@ function updateFilteredProducts(type = '') {
           </div>
         </div>
       </div> -->
-
+      
       <!-- <hr> -->
       
       <!-- Filters -->
@@ -218,7 +221,7 @@ function updateFilteredProducts(type = '') {
                 </div>
               </DisclosurePanel>
             </Disclosure> -->
-
+        
             <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }" v-if="brands.length">
               <h3 class="-my-3 flow-root">
                 <DisclosureButton class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
@@ -262,7 +265,10 @@ function updateFilteredProducts(type = '') {
 
           <!-- Product grid -->
           <div :class="category.parent_id == null ? 'lg:col-span-4' : 'lg:col-span-3'">
-            <ProductList :products="products" />
+            <ProductList v-if="products.data.length" :products="products" />
+            <div v-else class="mt-6 flex w-full items-center justify-center text-lg font-medium text-gray-500">
+              No products found
+            </div>
           </div>
         </div>
       </section>

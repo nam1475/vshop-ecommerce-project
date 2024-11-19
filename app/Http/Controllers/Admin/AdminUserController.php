@@ -24,14 +24,16 @@ class AdminUserController extends Controller
     public function index()
     {
         return Inertia::render('Admin/User/Index', [
-            'users' => User::with('roles')->paginate(10)
+            'users' => User::with('roles')->paginate(10),
+            'title' => 'Admin Users',
         ]);
     }
 
     public function create()
     {
         return Inertia::render('Admin/User/Create', [
-            'roles' => $this->adminRoleService->getRoles()
+            'roles' => $this->adminRoleService->getRoles(),
+            'title' => 'Admin User Create',
         ]);
     }
 
@@ -50,6 +52,7 @@ class AdminUserController extends Controller
             'user' => $this->adminUserService->getUserById($id),
             'roles' => $this->adminRoleService->getRoles(),
             'userHasRoles' => $this->adminUserService->getUserHasRoles($id),
+            'title' => 'Admin User Edit',
         ]);
     }
 

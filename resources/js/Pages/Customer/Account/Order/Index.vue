@@ -1,13 +1,14 @@
 <script setup>
 import Index from '@/Pages/Customer/Account/Index.vue'
 import { defineProps, watch, ref } from 'vue'
-import {router, Link} from '@inertiajs/vue3'
+import {router, Link, Head} from '@inertiajs/vue3'
 import { success, error } from '@/alert.js';
 import Pagination from '@/Pages/Admin/Components/Pagination.vue'
 // import { useRoute } from 'vue-router';
 
 const props = defineProps({
-    orders: Object
+    orders: Object,
+    title: String
 });
 
 function cancelOrder(orderId){
@@ -63,6 +64,8 @@ function filterOrders(value){
 
 <template>
 <Index>
+    <Head :title="title" />
+
     <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
         <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
             <div class="mx-auto max-w-5xl">
@@ -80,7 +83,7 @@ function filterOrders(value){
                         </select>
                     </div>
 
-                    <span class="inline-block text-gray-500 dark:text-gray-400"> from </span>
+                    <!-- <span class="inline-block text-gray-500 dark:text-gray-400"> from </span>
 
                     <div>
                         <label for="duration" class="sr-only mb-2 block text-sm font-medium text-gray-900 dark:text-white">Select duration</label>
@@ -91,7 +94,7 @@ function filterOrders(value){
                         <option value="lats 6 months">the last 6 months</option>
                         <option value="this year">this year</option>
                         </select>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             

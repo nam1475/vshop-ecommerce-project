@@ -3,9 +3,15 @@ import { useForm } from "@inertiajs/vue3";
 import { success, error } from "@/alert.js";
 import FormAction from '@/Pages/Admin/Components/FormAction.vue';
 import InputError from '@/Components/InputError.vue';
+import { Head } from '@inertiajs/vue3';
+import {defineProps} from 'vue';
+
+defineProps({
+  title: String
+});
 
 const form = useForm({
-    name: "",
+  name: "",
 });
 
 function addBrand() {
@@ -25,6 +31,7 @@ function addBrand() {
 </script>
 
 <template>
+<Head :title="title" />
 <FormAction title="Add New Brand" :action="addBrand">
   <div class="grid gap-4 mb-4 grid-cols-3">
     <div class="col-span-1">

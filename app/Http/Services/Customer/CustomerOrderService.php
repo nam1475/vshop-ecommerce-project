@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use Illuminate\Http\Request;
-use Stripe\Checkout\Session;
+use Stripe\Checkout\Session as SessionCheckout;
 use Stripe\Stripe;
 use Stripe\StripeClient;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,6 +17,8 @@ use App\Models\Customer;
 use App\Notifications\Checkout as NotificationsCheckout;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Session;
+
 
 class CustomerOrderService
 {
@@ -34,6 +36,10 @@ class CustomerOrderService
             $mergeData = [];
             foreach($carts as $cart){
                 foreach($products as $product){
+                    if($cart['quantity'] > $product['quantity']){
+                        Session::flash('error', 'Product quantity is not enough!');
+                        return false;
+                    }
                     if($cart['product_id'] == $product['id']){
                         $mergeData[] = array_merge($cart, ['name' => $product['name'], 'price' => $product['price']]);
                     }
@@ -112,7 +118,7 @@ class CustomerOrderService
 
             Stripe::setApiKey(config('services.stripe.secret'));
             $sessionId = $request->get('session_id');
-            $session = Session::retrieve($sessionId);
+            $session = SessionCheckout::retrieve($sessionId);
             if (!$session) {
                 throw new NotFoundHttpException();
                 return false;
