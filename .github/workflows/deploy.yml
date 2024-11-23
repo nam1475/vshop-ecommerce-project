@@ -13,8 +13,11 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
     
-    - name: Copy .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    # - name: Copy .env
+    #   run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+    - name: Create .env file
+      run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
     
     - name: Modify .env file
       run: |
@@ -43,7 +46,7 @@ jobs:
 
     - name: Build assets
       run: npm run build
-      
+    
     # - name: Generate key
     #   run: php artisan key:generate
 
