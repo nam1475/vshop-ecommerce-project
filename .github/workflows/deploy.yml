@@ -25,12 +25,24 @@ jobs:
         sed -i "s|DB_DATABASE=.*|DB_DATABASE=${{ secrets.DB_DATABASE }}|" .env
         sed -i "s|DB_USERNAME=.*|DB_USERNAME=${{ secrets.DB_USERNAME }}|" .env
         sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${{ secrets.DB_PASSWORD }}|" .env
+        sed -i "s|GOOGLE_REDIRECT_URI=.*|GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}|" .env
 
     # - name: Config Cache
     #   run: php artisan config:cache
 
     - name: Install dependencies
       run: composer update --no-interaction --no-progress
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Node.js dependencies
+      run: npm install
+
+    - name: Build assets
+      run: npm run build
       
     # - name: Generate key
     #   run: php artisan key:generate
