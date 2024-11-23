@@ -12,6 +12,7 @@ use App\Http\Controllers\Customer\Auth\RegisteredController;
 use App\Http\Controllers\Customer\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+
 /* Guest: Chưa đăng nhập */
 Route::middleware('guest:customer')->group(function () {
     Route::get('register', [RegisteredController::class, 'create'])
